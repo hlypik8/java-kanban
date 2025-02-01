@@ -1,3 +1,6 @@
+import manager.TaskManager;
+import model.*;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -26,7 +29,7 @@ public class Main {
         tm.updateTask(new Task(2, "Погулять с собакой", "В парке", Status.IN_PROGRESS));
 
         tm.updateEpic(new Epic(1, "Переехать", "В купленную квартиру"));
-        tm.updateSubtask(new Subtask(1, "Собрать вещи", "Из шкафа", Status.IN_PROGRESS, move));
+        tm.updateSubtask(new Subtask(1, "Собрать вещи", "Из шкафа", Status.DONE, move));
         tm.updateSubtask(new Subtask(2, "Сложить вещи", "В машину", Status.DONE, move));
 
         tm.updateSubtask(new Subtask(3, "Сварить макароны", "Бабочки", Status.DONE, cook));

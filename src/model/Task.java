@@ -1,9 +1,12 @@
+package model;
+
+import java.util.Objects;
 
 public class Task {
     protected String name;
     protected String description;
-    protected int id;
-    protected Status status;
+    public int id;
+    public Status status;
 
     public Task(int id, String name, String description, Status status) {
         this.id = id;
@@ -26,5 +29,18 @@ public class Task {
                 ", id=" + id +
                 ", status=" + status +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

@@ -1,4 +1,7 @@
+package model;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Epic extends Task {
     private final ArrayList<Subtask> subtaskList = new ArrayList<>();
@@ -23,22 +26,14 @@ public class Epic extends Task {
     }
 
     public void updateStatus() {
-        boolean allSubtasksIsDone = true;
-        boolean allSubtasksIsNew = true;
-
-        for (Subtask subtask : subtaskList) {
-            if (subtask.status != Status.NEW) {
-                allSubtasksIsNew = false;
-            }
-            if (subtask.status != Status.DONE) {
-                allSubtasksIsDone = false;
-            }
+        HashSet<Status> statuses = new HashSet<>();
+        for (Subtask subtask : getSubtaskList()) {
+            statuses.add(subtask.status);
         }
-        if (allSubtasksIsDone) {
-            this.status = Status.DONE;
-        } else if (allSubtasksIsNew) {
-            this.status = Status.NEW;
-        } else this.status = Status.IN_PROGRESS;
+        if(statuses.size() == 1){
+            this.status = statuses.iterator().next();
+        }else this.status = Status.IN_PROGRESS;
+        statuses.clear();
     }
 
     @Override
