@@ -112,7 +112,7 @@ public class TaskManager {
 
     public void deleteEpicById(int id) {
         Epic epic = epics.remove(id); //Удаляем элемент из HashMap epics
-        if(epic != null){ //Удаляем из HashMap subtasks сабтаски, которые входили в эпик
+        if (epic != null) { //Удаляем из HashMap subtasks сабтаски, которые входили в эпик
             for (Subtask subtask : new ArrayList<>(epic.getSubtaskList())) {
                 subtasks.remove(subtask.id);
             }
@@ -122,9 +122,9 @@ public class TaskManager {
 
     public void deleteSubtaskById(int id) {
         Subtask subtask = subtasks.remove(id);//даляем элемент из HashMap subtasks
-        if(subtask != null ){
+        if (subtask != null) {
             Epic epic = subtask.getEpic(); //олучаем эпик в котором содержался удаленный сабтаск
-            if(epic != null && epics.containsKey(epic.id)){
+            if (epic != null && epics.containsKey(epic.id)) {
                 epic.removeSubtask(subtask); // Удаляем сабтаск из списка сабтасков эпика
             }
         }

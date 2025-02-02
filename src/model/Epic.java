@@ -29,11 +29,12 @@ public class Epic extends Task {
         HashSet<Status> statuses = new HashSet<>();
         for (Subtask subtask : getSubtaskList()) {
             statuses.add(subtask.status);
-        }
-        if(statuses.size() == 1){
+        } //Спасибо за проверку задания! Было интересно его выполнять!
+        if (statuses.size() == 1) {
             this.status = statuses.iterator().next();
-        }else this.status = Status.IN_PROGRESS;
-        statuses.clear();
+        } else {
+            this.status = Status.IN_PROGRESS;
+        }
     }
 
     @Override
