@@ -5,6 +5,7 @@ public class Main {
 
     public static void main(String[] args) {
         TaskManager tm = new TaskManager();
+        //Осуществляем проверку работы программы
 
         tm.newTask(new Task(1, "Купить молоко", "В пятерочке", Status.NEW));
         tm.newTask(new Task(2, "Погулять с собакой", "В парке", Status.NEW));
