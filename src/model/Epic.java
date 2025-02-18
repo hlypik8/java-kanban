@@ -11,6 +11,11 @@ public class Epic extends Task {
         //как подзадач в нем нет
     }
 
+    //Также добавим констроуктор копировнаия
+    public Epic(Epic currentEpic) {
+        super(currentEpic);
+    }
+
     public void addSubtask(Subtask subtask) {
         subtaskList.add(subtask);
         updateStatus(); //При добавлении новой подзадачи проверяем статус эпика

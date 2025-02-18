@@ -8,10 +8,10 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private final List<Task> history = new LinkedList<>();
     private int nextTaskId = 1;
     private int nextSubtaskId = 1;
     private int nextEpicId = 1;
+    HistoryManager historyManager = Managers.getDefaultHistory();
 
     //2a) Методы для получения списка всех задач подзадач и эпиков
     @Override
@@ -54,34 +54,30 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-
-        if (history.size() >= 10) {
-            history.removeFirst();
+        if (historyManager.getHistory().size() >= 10) {
+            historyManager.getHistory().removeFirst();
         }
-
-        history.add(tasks.get(id));
+        Task currentTask = tasks.get(id);
+        historyManager.getHistory().add(new Task(currentTask));
         return tasks.get(id);
     }
 
     @Override
     public Epic getEpicById(int id) {
-
-        if (history.size() >= 10) {
-            history.removeFirst();
+        if (historyManager.getHistory().size() >= 10) {
+            historyManager.getHistory().removeFirst();
         }
-
-        history.add(epics.get(id));
+        Epic currentEpic = epics.get(id);
+        historyManager.getHistory().add(new Epic(currentEpic));
         return epics.get(id);
     }
 
     @Override
     public Subtask getSubtaskById(int id) {
-
-        if (history.size() >= 10) {
-            history.removeFirst();
+        if (historyManager.getHistory().size() >= 10) {
+            historyManager.getHistory().removeFirst();
         }
-
-        history.add(subtasks.get(id));
+        historyManager.getHistory().add(subtasks.get(id));
         return subtasks.get(id);
     }
 
@@ -170,9 +166,8 @@ public class InMemoryTaskManager implements TaskManager {
         return epics.get(epicId).getSubtaskList();
     }
 
-    //Реализация метода получения истории просмотра
     @Override
-    public List<Task> getHistory() {
-        return history;
+    public List<Task> getHistory(){
+        return historyManager.getHistory();
     }
 }

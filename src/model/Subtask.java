@@ -11,6 +11,11 @@ public class Subtask extends Task {
         this.epic = epic;
     }
 
+    public Subtask(Subtask subtask, Epic epic){
+        super(subtask);
+        this.epic = epic;
+    }
+
     //При обновлении сабтаска обновляются все поля и вызывается проверка статуса эпика, в котором находится сабтаск
     @Override
     public void update(Task updatedTask) {

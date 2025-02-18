@@ -47,9 +47,5 @@ public interface TaskManager {
     //3a) Метод для получения списка всех задач определенного эпика
     ArrayList<Subtask> getSubtasksInEpic(int epicId);
 
-    //Метод для получения истории просмотренных задач
-
     List<Task> getHistory();
-
-
 }
