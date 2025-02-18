@@ -1,10 +1,9 @@
-import manager.TaskManager;
 import model.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager tm = new TaskManager();
+        /*TaskManager tm = new TaskManager();
         //Осуществляем проверку работы программы
 
         tm.newTask(new Task(1, "Купить молоко", "В пятерочке", Status.NEW));
@@ -63,5 +62,7 @@ public class Main {
         tm.deleteAllEpics();
         System.out.println(tm.getEpicsList());
         System.out.println(tm.getSubtasksList());
+
+         */
     }
 }
