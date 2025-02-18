@@ -53,7 +53,7 @@ class InMemoryTaskManagerTest {
 
         assertEquals(new Task(1,"Test", "Description", Status.NEW), tm.getTaskById(1));
     }
-    /*
+
     @Test
     public void historyManagerShouldKeepNotUpdatedTaskVersion(){
         TaskManager tm = Managers.getDefault();
@@ -63,8 +63,8 @@ class InMemoryTaskManagerTest {
         tm.getTaskById(1);
         tm.updateTask(task1);
         tm.getTaskById(1);
-
-        assertNotEquals(tm.getHistory().get(0), tm.getHistory().get(1));
+        //Здесть сравнивем статусы так как метод equals() класса Task сравнивает задачи только по id
+        assertNotEquals(tm.getHistory().get(0).status, tm.getHistory().get(1).status);
     }
 
     @Test
@@ -77,7 +77,7 @@ class InMemoryTaskManagerTest {
         tm.updateEpic(epic1);
         tm.getEpicById(1);
 
-        assertNotEquals(tm.getHistory().get(0), tm.getHistory().get(1));
+        assertNotEquals(tm.getHistory().get(0).status, tm.getHistory().get(1).status);
     }
 
     @Test
@@ -85,7 +85,7 @@ class InMemoryTaskManagerTest {
         TaskManager tm = Managers.getDefault();
         Epic epic = new Epic(1,"Test epic", "Description");
         Subtask subtask = new Subtask(1,"Test","Description", Status.NEW, epic);
-        Subtask subtask1 = new Subtask(1,"Test1","Description1", Status.IN_PROGRESS, epic);
+        Subtask subtask1 = new Subtask(1,"Test1","Description1", Status.DONE, epic);
         epic.addSubtask(subtask);
         tm.newEpic(epic);
         tm.newSubtask(subtask);
@@ -94,9 +94,6 @@ class InMemoryTaskManagerTest {
         tm.getSubtaskById(1);
 
         assertNotEquals(tm.getHistory().get(0).status, tm.getHistory().get(1).status);
-
     }
 
-
-     */
 }

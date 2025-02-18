@@ -69,7 +69,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         Epic currentEpic = epics.get(id);
         historyManager.getHistory().add(new Epic(currentEpic));
-        return epics.get(id);
+        return currentEpic;
     }
 
     @Override
@@ -77,8 +77,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (historyManager.getHistory().size() >= 10) {
             historyManager.getHistory().removeFirst();
         }
-        historyManager.getHistory().add(subtasks.get(id));
-        return subtasks.get(id);
+        Subtask currentSubtask = subtasks.get(id);
+        historyManager.getHistory().add(new Subtask(currentSubtask, currentSubtask.getEpic()));
+        return currentSubtask;
     }
 
     //2d) Методы для создания новых задач, подзадач и эпиков
