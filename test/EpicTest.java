@@ -40,19 +40,4 @@ class EpicTest {
 
         assertEquals(1, epic.getSubtaskList().size());
     }
-
-
-    /* Не совсем понимаю как можно реализовать проверку того, что эпик нельзя
-    добавить в самого себя в виде подзадачи так как при использовании метода
-    epic.addSubtask(epic1); компилятор выдает ошибку
-    incompatible types: model.Epic cannot be converted to model.Subtask
-    и не бросает никакого исключения, поэтому не совсем понятно как осуществить такую проверку
-    @Test
-    public void shouldNotAddEpicAsSubtask(){
-        Epic epic = new Epic(1, "Test", "Test test");
-        Task epic1 = new Epic(2,"Test1", "Test1 test1");
-
-        epic.addSubtask(epic1);
-
-    }*/
 }

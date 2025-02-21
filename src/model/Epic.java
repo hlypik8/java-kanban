@@ -1,10 +1,11 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 
 public class Epic extends Task {
-    private final ArrayList<Subtask> subtaskList = new ArrayList<>();
+    private final Collection<Subtask> subtaskList = new ArrayList<>();
 
     public Epic(int id, String name, String description) {
         super(id, name, description, Status.NEW); // При создании эпика по умолчанию устанавливем ему статус NEW, так
@@ -21,7 +22,7 @@ public class Epic extends Task {
         updateStatus(); //При добавлении новой подзадачи проверяем статус эпика
     }
 
-    public ArrayList<Subtask> getSubtaskList() {
+    public Collection<Subtask> getSubtaskList() {
         return subtaskList;
     }
 

@@ -2,15 +2,15 @@ package manager;
 
 import model.*;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public interface TaskManager {
-    ArrayList<Task> getTasksList();
+    Collection<Task> getTasksList();
 
-    ArrayList<Epic> getEpicsList();
+    Collection<Epic> getEpicsList();
 
-    ArrayList<Subtask> getSubtasksList();
+    Collection<Subtask> getSubtasksList();
 
     void deleteAllTasks();
 
@@ -45,7 +45,7 @@ public interface TaskManager {
     void deleteSubtaskById(int id);
 
     //3a) Метод для получения списка всех задач определенного эпика
-    ArrayList<Subtask> getSubtasksInEpic(int epicId);
+    Collection<Subtask> getSubtasksInEpic(int epicId);
 
     List<Task> getHistory();
 }

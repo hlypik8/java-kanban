@@ -17,7 +17,7 @@ public class Task {
 
     //Добавлен конструктор копирования для того, чтобы была возможность сохранять
     // старые задачи в истории
-    public Task(Task oldTask){
+    public Task(Task oldTask) {
         this.id = oldTask.id;
         this.name = oldTask.name;
         this.description = oldTask.description;

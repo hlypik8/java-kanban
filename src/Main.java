@@ -47,7 +47,7 @@ public class Main {
 
         System.out.println("\n Проверка метода удаления по id: \n");
         tm.deleteTaskById(2);
-        System.out.println(tm.getTaskById(2));
+        System.out.println(tm.getTasksList());
 
         System.out.println("\n Проверка метода полчуения сабтаска из списка эпиков: \n");
         System.out.println(tm.getSubtasksInEpic(2));

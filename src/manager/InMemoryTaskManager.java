@@ -5,13 +5,14 @@ import model.*;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
     private int nextTaskId = 1;
     private int nextSubtaskId = 1;
     private int nextEpicId = 1;
-    HistoryManager historyManager = Managers.getDefaultHistory();
+
 
     //2a) Методы для получения списка всех задач подзадач и эпиков
     @Override
@@ -54,31 +55,22 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        if (historyManager.getHistory().size() >= 10) {
-            historyManager.getHistory().removeFirst();
-        }
         Task currentTask = tasks.get(id);
-        historyManager.getHistory().add(new Task(currentTask));
-        return tasks.get(id);
+        historyManager.add(new Task(currentTask));
+        return currentTask;
     }
 
     @Override
     public Epic getEpicById(int id) {
-        if (historyManager.getHistory().size() >= 10) {
-            historyManager.getHistory().removeFirst();
-        }
         Epic currentEpic = epics.get(id);
-        historyManager.getHistory().add(new Epic(currentEpic));
+        historyManager.add(new Epic(currentEpic));
         return currentEpic;
     }
 
     @Override
     public Subtask getSubtaskById(int id) {
-        if (historyManager.getHistory().size() >= 10) {
-            historyManager.getHistory().removeFirst();
-        }
         Subtask currentSubtask = subtasks.get(id);
-        historyManager.getHistory().add(new Subtask(currentSubtask, currentSubtask.getEpic()));
+        historyManager.add(new Subtask(currentSubtask, currentSubtask.getEpic()));
         return currentSubtask;
     }
 
@@ -163,12 +155,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     //3a) Метод для получения списка всех задач определенного эпика
     @Override
-    public ArrayList<Subtask> getSubtasksInEpic(int epicId) {
+    public Collection<Subtask> getSubtasksInEpic(int epicId) {
         return epics.get(epicId).getSubtaskList();
     }
 
     @Override
-    public List<Task> getHistory(){
+    public List<Task> getHistory() {
         return historyManager.getHistory();
     }
 }
