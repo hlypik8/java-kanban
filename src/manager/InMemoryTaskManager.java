@@ -8,11 +8,14 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HistoryManager historyManager;
     private int nextTaskId = 1;
     private int nextSubtaskId = 1;
     private int nextEpicId = 1;
 
+    InMemoryTaskManager(HistoryManager historyManager){
+        this.historyManager = historyManager;
+    }
 
     //2a) Методы для получения списка всех задач подзадач и эпиков
     @Override
