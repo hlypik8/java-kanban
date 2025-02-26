@@ -1,3 +1,4 @@
+//Интерфес TaskManager для дальнейшей разработки
 package manager;
 
 import model.*;
@@ -6,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 public interface TaskManager {
+
     Collection<Task> getTasksList();
 
     Collection<Epic> getEpicsList();

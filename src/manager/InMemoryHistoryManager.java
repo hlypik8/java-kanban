@@ -1,3 +1,4 @@
+//Класс InMemoryHistoryManager для управления историей просмотре задач
 package manager;
 
 import model.Task;
