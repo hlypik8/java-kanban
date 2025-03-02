@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ManagersTest {
 
+    //Проверка того, что утилитарный класс всегда возвращает проинициализированные
+    // и готовые к работе экземпляры менеджеров (не null)
     @Test
     public void managersDefaultShouldNotBeNull(){
         assertNotNull(Managers.getDefault());
