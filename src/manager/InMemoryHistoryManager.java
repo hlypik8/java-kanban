@@ -89,9 +89,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void remove(int id) {
         if (historyHashMap.containsKey(id)) {
-            if (historyHashMap.get(id).task.getClass() == Task.class) {
-
-            }
             removeNode(historyHashMap.get(id));
         }
     }
