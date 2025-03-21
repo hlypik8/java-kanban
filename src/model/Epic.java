@@ -13,8 +13,10 @@ public class Epic extends Task {
     }
 
     //Также добавим констроуктор копировнаия
+    //Здесь осталась ошибка с прошлого спринта. Эпик копировался без списка подзадач
     public Epic(Epic currentEpic) {
         super(currentEpic);
+        this.subtaskList.addAll(currentEpic.getSubtaskList()); // Копируем подзадачи
     }
 
     public void addSubtask(Subtask subtask) {
@@ -34,7 +36,7 @@ public class Epic extends Task {
     public void updateStatus() {
         HashSet<Status> statuses = new HashSet<>();
         for (Subtask subtask : getSubtaskList()) {
-            statuses.add(subtask.status);
+            statuses.add(subtask.getStatus());
         }
         if (statuses.size() == 1) {
             this.status = statuses.iterator().next();
@@ -52,10 +54,10 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return "Epic{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
+                "name='" + this.getName() + '\'' +
+                ", description='" + this.getDescription() + '\'' +
+                ", id=" + this.getId() +
+                ", status=" + this.getStatus() +
                 ", subtaskList=" + subtaskList +
                 '}';
     }

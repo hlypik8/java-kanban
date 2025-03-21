@@ -3,10 +3,11 @@ package model;
 import java.util.Objects;
 
 public class Task {
-    protected String name;
-    protected String description;
-    public int id;
-    public Status status;
+    private String name;
+    private String description;
+    private final int id;
+    protected Status status;
+    //Улчушена целостность данных, id теперь private final
 
     public Task(int id, String name, String description, Status status) {
         this.id = id;
@@ -51,5 +52,21 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public String getName() {
+        return name;
     }
 }
