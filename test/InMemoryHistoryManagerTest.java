@@ -95,7 +95,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldDeleteSubtask(){
+    void shouldDeleteSubtask() {
         tm.getEpicById(epic.getId());
         tm.getSubtaskById(subtask.getId());
         tm.deleteEpicById(epic.getId());

@@ -89,17 +89,17 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void remove(int id) {
         Task taskToRemove = historyHashMap.get(id).task;
         if (historyHashMap.containsKey(id)) {
-            if(taskToRemove.getClass() == Epic.class){
+            if (taskToRemove.getClass() == Epic.class) {
                 removeAllSubtaskInEpic(id);
             }
             removeNode(historyHashMap.get(id));
         }
     }
 
-    public void removeAllSubtaskInEpic(int id){
+    public void removeAllSubtaskInEpic(int id) {
         Epic epic = (Epic) historyHashMap.get(id).task;
-        for(Subtask subtask : epic.getSubtaskList()){
-            if(historyHashMap.containsKey(subtask.getId())){
+        for (Subtask subtask : epic.getSubtaskList()) {
+            if (historyHashMap.containsKey(subtask.getId())) {
                 removeNode(historyHashMap.get(subtask.getId()));
             }
         }
