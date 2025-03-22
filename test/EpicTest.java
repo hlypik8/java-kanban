@@ -25,7 +25,7 @@ class EpicTest {
         Subtask subtask2 = new Subtask(1, "Test2", "Test2 test2", Status.DONE, epic);
         epic.addSubtask(subtask2);
 
-        assertEquals(Status.IN_PROGRESS, epic.status);
+        assertEquals(Status.IN_PROGRESS, epic.getStatus());
     }
 
     @Test

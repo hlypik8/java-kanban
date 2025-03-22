@@ -8,12 +8,12 @@ class ManagersTest {
     //Проверка того, что утилитарный класс всегда возвращает проинициализированные
     // и готовые к работе экземпляры менеджеров (не null)
     @Test
-    public void managersDefaultShouldNotBeNull(){
+    public void managersDefaultShouldNotBeNull() {
         assertNotNull(Managers.getDefault());
     }
 
     @Test
-    public void managersDefaultHistoryShouldNotBeNull(){
+    public void managersDefaultHistoryShouldNotBeNull() {
         assertNotNull(Managers.getDefaultHistory());
     }
 }
