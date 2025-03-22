@@ -148,7 +148,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic != null) { //Удаляем из HashMap subtasks сабтаски, которые входили в эпик
             for (Subtask subtask : new ArrayList<>(epic.getSubtaskList())) {
                 subtasks.remove(subtask.getId());
-                historyManager.remove(subtask.getId());
             }
             epic.getSubtaskList().clear();
         }
@@ -157,7 +156,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteSubtaskById(int id) {
-        Subtask subtask = subtasks.remove(id);//даляем элемент из HashMap subtasks
+        Subtask subtask = subtasks.remove(id);//Удаляем элемент из HashMap subtasks
         if (subtask != null) {
             Epic epic = subtask.getEpic(); //Получаем эпик в котором содержался удаленный сабтаск
             if (epic != null && epics.containsKey(epic.getId())) {

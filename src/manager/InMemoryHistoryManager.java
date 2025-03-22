@@ -1,12 +1,11 @@
 //Класс InMemoryHistoryManager для управления историей просмотре задач
 package manager;
 
+import model.Epic;
+import model.Subtask;
 import model.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -88,8 +87,21 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
+        Task taskToRemove = historyHashMap.get(id).task;
         if (historyHashMap.containsKey(id)) {
+            if(taskToRemove.getClass() == Epic.class){
+                removeAllSubtaskInEpic(id);
+            }
             removeNode(historyHashMap.get(id));
+        }
+    }
+
+    public void removeAllSubtaskInEpic(int id){
+        Epic epic = (Epic) historyHashMap.get(id).task;
+        for(Subtask subtask : epic.getSubtaskList()){
+            if(historyHashMap.containsKey(subtask.getId())){
+                removeNode(historyHashMap.get(subtask.getId()));
+            }
         }
     }
 }

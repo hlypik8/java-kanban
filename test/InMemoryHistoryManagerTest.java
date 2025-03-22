@@ -34,6 +34,7 @@ public class InMemoryHistoryManagerTest {
     @Test
     void shouldAddTask() {
         tm.getTaskById(task.getId());
+
         assertEquals(List.of(task), tm.getHistory());
     }
 
@@ -42,6 +43,7 @@ public class InMemoryHistoryManagerTest {
         tm.getTaskById(task.getId());
         tm.getEpicById(epic.getId());
         tm.getSubtaskById(subtask.getId());
+
         assertEquals(List.of(task, epic, subtask), tm.getHistory());
     }
 
@@ -50,6 +52,7 @@ public class InMemoryHistoryManagerTest {
         tm.getTaskById(task.getId());
         tm.getEpicById(epic.getId());
         tm.getTaskById(task.getId());
+
         assertEquals(List.of(epic, task), tm.getHistory());
     }
 
@@ -58,6 +61,7 @@ public class InMemoryHistoryManagerTest {
     void shouldRemoveTask() {
         tm.getTaskById(task.getId());
         tm.deleteTaskById(task.getId());
+
         assertTrue(tm.getHistory().isEmpty());
     }
 
@@ -67,6 +71,7 @@ public class InMemoryHistoryManagerTest {
         tm.getTaskById(task.getId());
         tm.getSubtaskById(subtask.getId());
         tm.deleteTaskById(task.getId());
+
         assertEquals(List.of(epic, subtask), tm.getHistory());
     }
 
@@ -76,6 +81,7 @@ public class InMemoryHistoryManagerTest {
         tm.getTaskById(task.getId());
         tm.getEpicById(epic.getId());
         tm.getSubtaskById(subtask.getId());
+
         assertEquals(List.of(task, epic, subtask), tm.getHistory());
     }
 
@@ -86,5 +92,14 @@ public class InMemoryHistoryManagerTest {
         tm.deleteSubtaskById(subtask.getId());
 
         assertFalse(tm.getHistory().contains(subtask));
+    }
+
+    @Test
+    void shouldDeleteSubtask(){
+        tm.getEpicById(epic.getId());
+        tm.getSubtaskById(subtask.getId());
+        tm.deleteEpicById(epic.getId());
+
+        assertTrue(tm.getHistory().isEmpty());
     }
 }
