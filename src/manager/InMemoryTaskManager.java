@@ -8,18 +8,10 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
-    private final HistoryManager historyManager;
-    //Здесь я переработал систему генерации id у задач, так как при удалении из истории возникали большие проблемы с
-    //определением типа задачи. То есть если в истории просмотра хранились, например Task с id = 1 и Epic с id = 1,
-    //то при вызове метода removeTaskById(1) мог удалиться Epic (зависело от проядка нахождения в истории).Я очень
-    // долго пытался найти решение этой проблемы через .getClass() и подобные штуки, но ни к чему не пришел.
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
     private int nextTaskId = 100001; //Если id начинается с 1, то это Task
     private int nextEpicId = 200001; //Если id начинается с 2, то это Epic
     private int nextSubtaskId = 300001; //Если id начинается с 3, то это Subtask
-
-    InMemoryTaskManager(HistoryManager historyManager) {
-        this.historyManager = historyManager;
-    }
 
     //2a) Методы для получения списка всех задач подзадач и эпиков
     @Override
