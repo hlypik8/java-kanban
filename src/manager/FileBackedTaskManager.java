@@ -2,8 +2,9 @@ package manager;
 
 import model.*;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -15,17 +16,63 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     public void save() {
-        try (FileWriter fw = new FileWriter()) {
-
+        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+            //Записываем сналчала заголовок, затем все задачи по очереди. Наверное не очень хорошо, что при каждом
+            //вызове save() файл полностью переписывается заново, но я пока не придумал как реализовать
+            //метод, который  бы следил за всем записями
+            writer.write("id,type,name,status,description,epic\n"); //Оформляем заголовок
+            for (Task t : getTasksList()) {
+                writer.write(toString(t) + "\n");
+            }
+            for (Epic e : getEpicsList()) {
+                writer.write(toString(e) + "\n");
+            }
+            for (Subtask s : getSubtasksList()) {
+                writer.write(toString(s) + "\n");
+            }
+        } catch (ManagerSaveException e) {
+            System.out.print("Ошибка сохранения в файл: ");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.print("I/O ошибка при сохранении в файл: ");
+            e.printStackTrace();
         }
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        try {
+            String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+            String[] lines = content.split("\n");//Разделяем по строкам
 
+            for (int i = 1; i < lines.length; i++) { //i=1 потому что нужно пропустить заголовок
+                Task task = manager.fromString(lines[i]);
+
+                if (lines[i].isEmpty()) {
+                    continue;
+                }
+
+                switch (task.getType()) {
+                    case TASK:
+                        manager.newTask(task);
+                        break;
+                    case EPIC:
+                        manager.newEpic((Epic) task);
+                        break;
+                    case SUBTASK:
+                        manager.newSubtask((Subtask) task);
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            System.out.print("Ошибка загрузки из файла: ");
+            e.printStackTrace();
+        }
+        return manager;
     }
 
     public String toString(Task task) {
-        if(task.getType() == Type.SUBTASK){
+        if (task.getType() == Type.SUBTASK) { //Если сабтаск, то формат записи в файл отличен от тасков и эпиков
             Subtask subtask = (Subtask) task;
             return String.format("%d,%s,%s,%s,%s,%d",
                     subtask.getId(),
@@ -45,6 +92,38 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         );
     }
 
+    public Task fromString(String value) {
+        String[] fields = value.split(",");
+        int id = Integer.parseInt(fields[0]);
+        Type type = Type.valueOf(fields[1]);
+        String name = fields[2];
+        Status status = Status.valueOf(fields[3]);
+        String description = fields[4];
+        try {
+            switch (type) {
+                case TASK:
+                    return new Task(id, name, description, status);
+                case EPIC:
+                    return new Epic(id, name, description);
+                case SUBTASK:
+                    int epicId = Integer.parseInt(fields[5]);
+                    Epic parentEpic = getEpicById(epicId);
+                    if (parentEpic == null) {
+                        throw new IllegalArgumentException("Эпик не найден " + epicId);
+                    }
+                    Subtask subtask = new Subtask(id, name, description, status, parentEpic);
+                    parentEpic.addSubtask(subtask);
+                    return subtask;
+                default:
+                    return null;
+            }
+        } catch (Exception e) {
+            System.out.print("Ошибка парсинга: ");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public void newTask(Task task) {
         super.newTask(task);
@@ -53,13 +132,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void newEpic(Epic epic) {
-        super.newTask(epic);
+        super.newEpic(epic);
         save();
     }
 
     @Override
     public void newSubtask(Subtask subtask) {
-        super.newTask(subtask);
+        super.newSubtask(subtask);
         save();
     }
 
@@ -71,13 +150,50 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void updateEpic(Epic epic) {
-        super.updateTask(epic);
+        super.updateEpic(epic);
         save();
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        super.updateTask(subtask);
+        super.updateSubtask(subtask);
+        save();
+    }
+
+    @Override
+    public void deleteAllTasks() {
+        super.deleteAllTasks();
+        save();
+    }
+
+    @Override
+    public void deleteAllEpics() {
+        super.deleteAllEpics();
+        save();
+    }
+
+    @Override
+    public void deleteAllSubtasks() {
+        super.deleteAllSubtasks();
+        save();
+    }
+
+    @Override
+    //2f) Методы для удаления задачи, подзадачи и эпика по id
+    public void deleteTaskById(int id) {
+        super.deleteTaskById(id);
+        save();
+    }
+
+    @Override
+    public void deleteEpicById(int id) {
+        super.deleteEpicById(id);
+        save();
+    }
+
+    @Override
+    public void deleteSubtaskById(int id) {
+        super.deleteSubtaskById(id);
         save();
     }
 }

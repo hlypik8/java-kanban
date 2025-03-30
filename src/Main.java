@@ -1,12 +1,25 @@
 import model.*;
 import manager.*;
 
+import java.io.File;
+import java.io.IOException;
+
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager tm = Managers.getDefault();
-        //Осуществляем проверку работы программы
+        File file = null;
+        try {
+            file = File.createTempFile("Test", ".csv");
+        } catch (IOException e) {
+            System.out.print("Ошибка при создании файла: ");
+            e.printStackTrace();
+        }
 
+        TaskManager tm = Managers.getDefaultFile(file);
+
+        System.out.println("Создан пустой файл");
+        //Осуществляем проверку работы программы
+        //Заносим все задачи в файл
         tm.newTask(new Task(100001, "Купить молоко", "В пятерочке", Status.NEW));
         tm.newTask(new Task(100002, "Погулять с собакой", "В парке", Status.NEW));
 
@@ -19,31 +32,15 @@ public class Main {
         Epic cook = new Epic(200002, "Приготовить ужин", "Пасту");
         tm.newEpic(cook);
 
-        System.out.println(tm.getHistory());
-        System.out.println("1///////////////////////////////");
+        Task updatedTask1 = new Task(100001, "Купить молоко", "В пятерочке", Status.DONE);
+        tm.updateTask(updatedTask1);
 
-        tm.getTaskById(100001);
-        tm.getTaskById(100002);
-        System.out.println(tm.getHistory());
-        System.out.println("2///////////////////////////////");
-        tm.getEpicById(200001);
-        System.out.println(tm.getHistory());
-        System.out.println("3///////////////////////////////");
-        tm.getSubtaskById(300002);
-        System.out.println(tm.getHistory());
-        System.out.println("4///////////////////////////////");
-        tm.getSubtaskById(300003);
-        System.out.println(tm.getHistory());
-        System.out.println("5///////////////////////////////");
-        tm.getSubtaskById(300002);
-        System.out.println(tm.getHistory());
-        System.out.println("6///////////////////////////////");
-        tm.deleteTaskById(100001);
-        System.out.println(tm.getHistory());
-        System.out.println("7///////////////////////////////");
-        tm.deleteEpicById(200001);
-        System.out.println(tm.getHistory());
-        System.out.println("8///////////////////////////////");
-        //Все работет согласно требованиям
+        //Создаем еще один менеджер и получаем копии записанных задач
+        FileBackedTaskManager tm1 = FileBackedTaskManager.loadFromFile(file);
+        //Выводим скопированные задачи
+        System.out.println("Задачи: " + tm1.getTasksList());
+        System.out.println("Эпики: " + tm1.getEpicsList());
+        System.out.println("Подзадачи: " + tm1.getSubtasksList());
+
     }
 }
