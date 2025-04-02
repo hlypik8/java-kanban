@@ -7,6 +7,8 @@ public class Task {
     private String description;
     private final int id;
     protected Status status;
+
+    protected Type type;
     //Улчушена целостность данных, id теперь private final
 
     public Task(int id, String name, String description, Status status) {
@@ -14,6 +16,7 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
+        this.type = Type.TASK;
     }
 
     //Добавлен конструктор копирования для того, чтобы была возможность сохранять
@@ -23,6 +26,7 @@ public class Task {
         this.name = oldTask.name;
         this.description = oldTask.description;
         this.status = oldTask.status;
+        this.type = oldTask.type;
     }
 
     public void update(Task updatedTask) {
@@ -69,4 +73,9 @@ public class Task {
     public String getName() {
         return name;
     }
+
+    public Type getType() {
+        return type;
+    }
+
 }

@@ -10,6 +10,7 @@ public class Epic extends Task {
     public Epic(int id, String name, String description) {
         super(id, name, description, Status.NEW); // При создании эпика по умолчанию устанавливем ему статус NEW, так
         //как подзадач в нем нет
+        this.type = Type.EPIC;
     }
 
     //Также добавим констроуктор копировнаия
