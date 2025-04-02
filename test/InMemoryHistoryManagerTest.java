@@ -1,4 +1,3 @@
-import manager.ManagerSaveException;
 import manager.Managers;
 import manager.TaskManager;
 import model.Epic;
@@ -20,7 +19,7 @@ public class InMemoryHistoryManagerTest {
     private Subtask subtask;
 
     @BeforeEach
-    void setup() throws ManagerSaveException {
+    void setup() {
         tm = Managers.getDefault();
         task = new Task(100001, "Test task", "Description", Status.NEW);
         epic = new Epic(200001, "Test epic", "Description");
@@ -59,7 +58,7 @@ public class InMemoryHistoryManagerTest {
 
     //Тестирование удаления задач
     @Test
-    void shouldRemoveTask() throws ManagerSaveException {
+    void shouldRemoveTask() {
         tm.getTaskById(task.getId());
         tm.deleteTaskById(task.getId());
 
@@ -67,7 +66,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveMiddleNode() throws ManagerSaveException {
+    void shouldRemoveMiddleNode() {
         tm.getEpicById(epic.getId());
         tm.getTaskById(task.getId());
         tm.getSubtaskById(subtask.getId());
@@ -87,7 +86,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void testEpicSubtaskIntegrity() throws ManagerSaveException {
+    void testEpicSubtaskIntegrity() {
         tm.getEpicById(epic.getId());
         tm.getSubtaskById(subtask.getId());
         tm.deleteSubtaskById(subtask.getId());
@@ -96,7 +95,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldDeleteSubtask() throws ManagerSaveException {
+    void shouldDeleteSubtask() {
         tm.getEpicById(epic.getId());
         tm.getSubtaskById(subtask.getId());
         tm.deleteEpicById(epic.getId());

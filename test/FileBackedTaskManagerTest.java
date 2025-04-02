@@ -23,7 +23,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldSaveAndLoadEmptymanager() throws ManagerSaveException {
+    void shouldSaveAndLoadEmptyManager() {
         manager.save();
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
 
@@ -33,7 +33,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldUpdateTask() throws ManagerSaveException {
+    void shouldUpdateTask() {
         Task task = new Task(100001, "Original", "Original", Status.NEW);
         manager.newTask(task);
 
@@ -48,7 +48,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldDeleteTask() throws ManagerSaveException {
+    void shouldDeleteTask() {
         Task task = new Task(100001, "Task to delete", "Delete", Status.NEW);
         manager.newTask(task);
         manager.getTaskById(task.getId());//Здесь получем таск по id, чтобы он добавился в историю,
