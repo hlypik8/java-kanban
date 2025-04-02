@@ -1,4 +1,5 @@
 import manager.FileBackedTaskManager;
+import manager.ManagerSaveException;
 import model.*;
 import org.junit.jupiter.api.*;
 
@@ -22,7 +23,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldSaveAndLoadEmptymanager() {
+    void shouldSaveAndLoadEmptymanager() throws ManagerSaveException {
         manager.save();
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
 
@@ -32,7 +33,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldUpdateTask() {
+    void shouldUpdateTask() throws ManagerSaveException {
         Task task = new Task(100001, "Original", "Original", Status.NEW);
         manager.newTask(task);
 
@@ -47,7 +48,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldDeleteTask() {
+    void shouldDeleteTask() throws ManagerSaveException {
         Task task = new Task(100001, "Task to delete", "Delete", Status.NEW);
         manager.newTask(task);
         manager.getTaskById(task.getId());//Здесь получем таск по id, чтобы он добавился в историю,

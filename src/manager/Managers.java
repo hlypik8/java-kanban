@@ -9,6 +9,7 @@ public class Managers {
     private Managers() {
     }
 
+    //Ломаются тесты, если возвращать менеджер файлов
     public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
@@ -18,7 +19,7 @@ public class Managers {
     }
 
     //Добавляем в утилитарный класс менеджер файлов
-    public static FileBackedTaskManager getDefaultFile(File file) {
+    public static TaskManager getDefaultFile(File file) {
         return new FileBackedTaskManager(file);
     }
 }

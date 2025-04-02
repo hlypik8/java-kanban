@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import manager.ManagerSaveException;
 import manager.Managers;
 import manager.TaskManager;
 import model.*;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class InMemoryTaskManagerTest {
 
     @Test
-    public void shouldAddNewTask() {
+    public void shouldAddNewTask() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Task task = new Task(100001, "Test task", "Description", Status.NEW);
         tm.newTask(task);
@@ -16,7 +17,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void shouldAddNewEpic() {
+    public void shouldAddNewEpic() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Epic epic = new Epic(200001, "Test epic", "Description");
         tm.newEpic(epic);
@@ -24,7 +25,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void shouldAddNewSubtask() {
+    public void shouldAddNewSubtask() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Epic epic = new Epic(200001, "Test epic", "Description");
         tm.newEpic(epic);
@@ -35,7 +36,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void idsShouldNotConflict() {
+    public void idsShouldNotConflict() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Task task = new Task(100001, "Test", "Description", Status.NEW);
         tm.newTask(task);
@@ -44,7 +45,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void tasksShouldHaveSameFields() {
+    public void tasksShouldHaveSameFields() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Task task = new Task(100001, "Test", "Description", Status.NEW);
         tm.newTask(task);

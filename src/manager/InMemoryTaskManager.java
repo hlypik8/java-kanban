@@ -32,18 +32,18 @@ public class InMemoryTaskManager implements TaskManager {
     //2b) Методы для удаления всех задач, подзадач и эпиков
 
     @Override
-    public void deleteAllTasks() {
+    public void deleteAllTasks() throws ManagerSaveException {
         tasks.clear();
     }
 
     @Override
-    public void deleteAllEpics() {
+    public void deleteAllEpics() throws ManagerSaveException {
         epics.clear();
         subtasks.clear(); //Вместе со всеми эпиками удаляем все сабтаски
     }
 
     @Override
-    public void deleteAllSubtasks() {
+    public void deleteAllSubtasks() throws ManagerSaveException {
         for (Subtask subtask : subtasks.values()) { //Удаляем все сабтаски из всех эпиков
             subtask.getEpic().removeSubtask(subtask);
         }
@@ -76,7 +76,7 @@ public class InMemoryTaskManager implements TaskManager {
     //2d) Методы для создания новых задач, подзадач и эпиков
 
     @Override
-    public void newTask(Task task) {
+    public void newTask(Task task) throws ManagerSaveException {
         int id = nextTaskId++;
         task = new Task(id, task.getName(), task.getDescription(), task.getStatus());
         tasks.put(id, task);
@@ -84,14 +84,14 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public void newEpic(Epic epic) {
+    public void newEpic(Epic epic) throws ManagerSaveException {
         int id = nextEpicId++;
         epic = new Epic(id, epic.getName(), epic.getDescription());
         epics.put(id, epic);
     }
 
     @Override
-    public void newSubtask(Subtask subtask) {
+    public void newSubtask(Subtask subtask) throws ManagerSaveException {
         //Так как сабтаск не может существовать вне эпика, то при создании нового сабтаска сразу же определяем
         //к какому эпику он принадлежит и заносим в список сабтасков эпика
         int id = nextSubtaskId++;
@@ -104,7 +104,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     //2e) Методы для обновления задачи, подзадачи и эпика
-    public void updateTask(Task updatedTask) {
+    public void updateTask(Task updatedTask) throws ManagerSaveException {
         Task existingTask = tasks.get(updatedTask.getId());
         if (existingTask != null) { //Проверяем существет ли задача
             existingTask.update(updatedTask);// Обновляем задачу с сохранением id
@@ -112,7 +112,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateEpic(Epic updatedEpic) {
+    public void updateEpic(Epic updatedEpic) throws ManagerSaveException {
         Epic existingEpic = epics.get(updatedEpic.getId());
         if (existingEpic != null) {
             existingEpic.update(updatedEpic);
@@ -120,7 +120,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask updatedSubtask) {
+    public void updateSubtask(Subtask updatedSubtask) throws ManagerSaveException {
         Subtask existingSubtask = subtasks.get(updatedSubtask.getId());
         if (existingSubtask != null) {
             existingSubtask.update(updatedSubtask);
@@ -129,13 +129,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     //2f) Методы для удаления задачи, подзадачи и эпика по id
-    public void deleteTaskById(int id) {
+    public void deleteTaskById(int id) throws ManagerSaveException {
         tasks.remove(id);
         historyManager.remove(id);
     }
 
     @Override
-    public void deleteEpicById(int id) {
+    public void deleteEpicById(int id) throws ManagerSaveException {
         Epic epic = epics.remove(id); //Удаляем элемент из HashMap epics
         if (epic != null) { //Удаляем из HashMap subtasks сабтаски, которые входили в эпик
             for (Subtask subtask : new ArrayList<>(epic.getSubtaskList())) {
@@ -147,7 +147,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteSubtaskById(int id) {
+    public void deleteSubtaskById(int id) throws ManagerSaveException {
         Subtask subtask = subtasks.remove(id);//Удаляем элемент из HashMap subtasks
         if (subtask != null) {
             Epic epic = subtask.getEpic(); //Получаем эпик в котором содержался удаленный сабтаск

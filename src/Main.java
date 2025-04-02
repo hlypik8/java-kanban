@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ManagerSaveException {
         File file = null;
         try {
             file = File.createTempFile("Test", ".csv");

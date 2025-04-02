@@ -15,7 +15,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
 
-    public void save() {
+    public void save() throws ManagerSaveException {
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
             //Записываем сналчала заголовок, затем все задачи по очереди. Наверное не очень хорошо, что при каждом
             //вызове save() файл полностью переписывается заново, но я пока не придумал как реализовать
@@ -30,12 +30,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             for (Subtask s : getSubtasksList()) {
                 writer.write(toString(s) + "\n");
             }
-        } catch (ManagerSaveException e) {
-            System.out.print("Ошибка сохранения в файл: ");
-            e.printStackTrace();
         } catch (IOException e) {
             System.out.print("I/O ошибка при сохранении в файл: ");
             e.printStackTrace();
+            throw new ManagerSaveException("Ошибка сохранения в файл");
         }
     }
 
@@ -92,7 +90,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         );
     }
 
-    public Task fromString(String value) {
+    public Task fromString(String value) throws ManagerLoadException {
         String[] fields = value.split(",");
         int id = Integer.parseInt(fields[0]);
         Type type = Type.valueOf(fields[1]);
@@ -120,79 +118,79 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (Exception e) {
             System.out.print("Ошибка парсинга: ");
             e.printStackTrace();
-            return null;
+            throw new ManagerLoadException("Ошибка записи из файла");
         }
     }
 
     @Override
-    public void newTask(Task task) {
+    public void newTask(Task task) throws ManagerSaveException {
         super.newTask(task);
         save();
     }
 
     @Override
-    public void newEpic(Epic epic) {
+    public void newEpic(Epic epic) throws ManagerSaveException {
         super.newEpic(epic);
         save();
     }
 
     @Override
-    public void newSubtask(Subtask subtask) {
+    public void newSubtask(Subtask subtask) throws ManagerSaveException {
         super.newSubtask(subtask);
         save();
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws ManagerSaveException {
         super.updateTask(task);
         save();
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public void updateEpic(Epic epic) throws ManagerSaveException {
         super.updateEpic(epic);
         save();
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws ManagerSaveException {
         super.updateSubtask(subtask);
         save();
     }
 
     @Override
-    public void deleteAllTasks() {
+    public void deleteAllTasks() throws ManagerSaveException {
         super.deleteAllTasks();
         save();
     }
 
     @Override
-    public void deleteAllEpics() {
+    public void deleteAllEpics() throws ManagerSaveException {
         super.deleteAllEpics();
         save();
     }
 
     @Override
-    public void deleteAllSubtasks() {
+    public void deleteAllSubtasks() throws ManagerSaveException {
         super.deleteAllSubtasks();
         save();
     }
 
     @Override
     //2f) Методы для удаления задачи, подзадачи и эпика по id
-    public void deleteTaskById(int id) {
+    public void deleteTaskById(int id) throws ManagerSaveException {
         super.deleteTaskById(id);
         save();
     }
 
     @Override
-    public void deleteEpicById(int id) {
+    public void deleteEpicById(int id) throws ManagerSaveException {
         super.deleteEpicById(id);
         save();
     }
 
     @Override
-    public void deleteSubtaskById(int id) {
+    public void deleteSubtaskById(int id) throws ManagerSaveException {
         super.deleteSubtaskById(id);
         save();
     }
