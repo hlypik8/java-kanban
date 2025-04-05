@@ -33,18 +33,18 @@ public interface TaskManager {
     void newSubtask(Subtask subtask) throws ManagerSaveException;
 
     //2e) Методы для обновления задачи, подзадачи и эпика
-    void updateTask(Task updatedTask) throws ManagerSaveException;
+    void updateTask(Task updatedTask);
 
-    void updateEpic(Epic updatedEpic) throws ManagerSaveException;
+    void updateEpic(Epic updatedEpic);
 
-    void updateSubtask(Subtask updatedSubtask) throws ManagerSaveException;
+    void updateSubtask(Subtask updatedSubtask);
 
     //2f) Методы для удаления задачи, подзадачи и эпика по id
-    void deleteTaskById(int id) throws ManagerSaveException;
+    void deleteTaskById(int id);
 
-    void deleteEpicById(int id) throws ManagerSaveException;
+    void deleteEpicById(int id);
 
-    void deleteSubtaskById(int id) throws ManagerSaveException;
+    void deleteSubtaskById(int id);
 
     //3a) Метод для получения списка всех задач определенного эпика
     Collection<Subtask> getSubtasksInEpic(int epicId);
