@@ -1,28 +1,34 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Epic extends Task {
     private final Collection<Subtask> subtaskList = new ArrayList<>();
+    private LocalDateTime endTime;
 
     public Epic(int id, String name, String description) {
-        super(id, name, description, Status.NEW); // При создании эпика по умолчанию устанавливем ему статус NEW, так
-        //как подзадач в нем нет
+        super(id, name, description, Status.NEW, LocalDateTime.now(), Duration.ZERO);
         this.type = Type.EPIC;
+        setEpicDuration();
+        setEpicStartTime();
+        setEndTime();
     }
 
-    //Также добавим констроуктор копировнаия
-    //Здесь осталась ошибка с прошлого спринта. Эпик копировался без списка подзадач
     public Epic(Epic currentEpic) {
         super(currentEpic);
         this.subtaskList.addAll(currentEpic.getSubtaskList()); // Копируем подзадачи
+        this.endTime = currentEpic.getEndTime();
     }
 
     public void addSubtask(Subtask subtask) {
         subtaskList.add(subtask);
         updateStatus(); //При добавлении новой подзадачи проверяем статус эпика
+        setEpicDuration(); // устанавливаем длительность эпика (через расчет)
+        setEpicStartTime(); // устанавливаем время начала эпика (также рассчитываем)
+        setEndTime(); //Устанавливаем время конца эпика
     }
 
     public Collection<Subtask> getSubtaskList() {
@@ -32,18 +38,74 @@ public class Epic extends Task {
     public void removeSubtask(Subtask subtask) {
         subtaskList.remove(subtask);
         updateStatus();
+        setEpicDuration();
+        setEpicStartTime();
+        setEndTime();
     }
 
     public void updateStatus() {
-        HashSet<Status> statuses = new HashSet<>();
-        for (Subtask subtask : getSubtaskList()) {
-            statuses.add(subtask.getStatus());
+        Set<Status> statuses = getSubtaskList().stream()
+                .map(Subtask::getStatus)
+                .collect(Collectors.toSet());
+
+        this.status = statuses.size() == 1 ? statuses.iterator().next() : Status.IN_PROGRESS;
+    }
+
+    //Рассчитываем время начало эпика как время начала самого раннего сабтаска
+    public Optional<LocalDateTime> calculateEpicStartTime() {
+        if (subtaskList.isEmpty()) {
+            return Optional.of(LocalDateTime.now());//Если сабтасков нет, то устанавливаем время создания эпика как
+        } else {                                     //время начала эпика
+            return subtaskList.stream()
+                    .map(Subtask::getStartTime) // Получаем время начала сабтасков
+                    .filter(Objects::nonNull)//Фильтруем от null значений (на всякий случай)
+                    .min(Comparator.naturalOrder());//Возвращаем минимальный элемент стрима
         }
-        if (statuses.size() == 1) {
-            this.status = statuses.iterator().next();
+    }
+
+    public void setEpicStartTime() {
+        if (calculateEpicStartTime().isPresent()) {
+            this.startTime = calculateEpicStartTime().get();
+        }
+    }
+
+    //Рассчитываем длительность эпика как сумму длительностей всех сабтасков
+    public Optional<Duration> calculateEpicDuration() {
+        if (subtaskList.isEmpty()) {
+            return Optional.of(Duration.ZERO); //Если список сабтасков пуст, то устанавливаем нулевую длительность
         } else {
-            this.status = Status.IN_PROGRESS;
+            return subtaskList.stream()
+                    .map(Subtask::getDuration) // Получаем время начала каждого сабтаска
+                    .reduce(Duration::plus); // Суммируем
         }
+    }
+
+    public void setEpicDuration() {
+        if (calculateEpicDuration().isPresent()) {
+            this.duration = calculateEpicDuration().get();
+        }
+    }
+
+    public Optional<LocalDateTime> calculateEpicEndTime(){
+        if (subtaskList.isEmpty()) {
+            return Optional.of(LocalDateTime.now());//Если сабтасков нет, то устанавливаем время создания эпика
+        } else {                                     // как время окончания эпика
+            return subtaskList.stream()
+                    .map(Subtask::getEndTime) // Получаем время конца сабтасков
+                    .filter(Objects::nonNull)//Фильтруем от null значений (на всякий случай)
+                    .max(Comparator.naturalOrder());//Возвращаем максимальный элемент стрима
+        }
+    }
+
+    public void setEndTime() {
+        if (calculateEpicEndTime().isPresent()){
+            this.endTime = calculateEpicEndTime().get();
+        }
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     @Override

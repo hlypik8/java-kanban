@@ -3,6 +3,9 @@ import model.Status;
 import model.Subtask;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
@@ -19,9 +22,11 @@ class EpicTest {
     public void shouldUpdateEpicStatus() {
         Epic epic = new Epic(1, "Test", "Test test");
 
-        Subtask subtask1 = new Subtask(1, "Test1", "Test1 test1", Status.NEW, epic);
+        Subtask subtask1 = new Subtask(1, "Test1", "Test1 test1", Status.NEW, epic,
+                LocalDateTime.now(), Duration.ZERO);
         epic.addSubtask(subtask1);
-        Subtask subtask2 = new Subtask(1, "Test2", "Test2 test2", Status.DONE, epic);
+        Subtask subtask2 = new Subtask(1, "Test2", "Test2 test2", Status.DONE, epic,
+                LocalDateTime.now(), Duration.ZERO);
         epic.addSubtask(subtask2);
 
         assertEquals(Status.IN_PROGRESS, epic.getStatus());
@@ -31,9 +36,11 @@ class EpicTest {
     public void shouldRemoveSubtask() {
         Epic epic = new Epic(1, "Test", "Test test");
 
-        Subtask subtask1 = new Subtask(1, "Test1", "Test1 test1", Status.NEW, epic);
+        Subtask subtask1 = new Subtask(1, "Test1", "Test1 test1", Status.NEW, epic,
+                LocalDateTime.now(), Duration.ZERO);
         epic.addSubtask(subtask1);
-        Subtask subtask2 = new Subtask(1, "Test2", "Test2 test2", Status.DONE, epic);
+        Subtask subtask2 = new Subtask(1, "Test2", "Test2 test2", Status.DONE, epic,
+                LocalDateTime.now(), Duration.ZERO);
         epic.addSubtask(subtask2);
         epic.removeSubtask(subtask2);
 

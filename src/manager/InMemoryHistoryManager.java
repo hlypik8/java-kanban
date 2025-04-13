@@ -1,4 +1,4 @@
-//Класс InMemoryHistoryManager для управления историей просмотре задач
+//Класс InMemoryHistoryManager для управления историей просмотра задач
 package manager;
 
 import model.Epic;
@@ -64,7 +64,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
-        //Проверяем, существет ли задача
+        //Проверяем, существует ли задача
         if (historyHashMap.containsKey(task.getId())) {
             Node existingNode = historyHashMap.get(task.getId());
             removeNode(existingNode);
@@ -98,10 +98,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     public void removeAllSubtaskInEpic(int id) {
         Epic epic = (Epic) historyHashMap.get(id).task;
-        for (Subtask subtask : epic.getSubtaskList()) {
-            if (historyHashMap.containsKey(subtask.getId())) {
-                removeNode(historyHashMap.get(subtask.getId()));
-            }
-        }
+        epic.getSubtaskList().stream()
+                .map(Subtask::getId)
+                .filter(historyHashMap::containsKey)
+                .map(historyHashMap::get)
+                .forEach(this::removeNode);
     }
 }
