@@ -121,9 +121,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     //2e) Методы для обновления задачи, подзадачи и эпика
     public void updateTask(Task updatedTask) {
-        Task existingTask = tasks.get(updatedTask.getId());
-        prioritizedTasks.remove(tasks.get(updatedTask.getId()));//здесь удаляем и снова добавляем обновленную задачу
-        if (existingTask != null) {// т.к. старая версия задачи оставалась бы в множестве
+        Task existingTask = tasks.get(updatedTask.getId());//здесь удаляем и снова добавляем обновленную задачу
+        prioritizedTasks.remove(tasks.get(updatedTask.getId()));//т.к. старая версия задачи оставалась бы в множестве
+        if (existingTask != null) {
             if (intersectionCheck(updatedTask)) {
                 throw new IllegalArgumentException("Обновленная версия задачи пресекается по времени с существующей!");
             }
