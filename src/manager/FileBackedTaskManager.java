@@ -19,7 +19,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-            //Записываем сналчала заголовок, затем все задачи по очереди. Наверное не очень хорошо, что при каждом
+            //Записываем сначала заголовок, затем все задачи по очереди. Наверное не очень хорошо, что при каждом
             //вызове save() файл полностью переписывается заново, но я пока не придумал как реализовать
             //метод, который бы следил за всем записями
             writer.write("id,type,name,status,description,startTime,duration,epic\n"); //Оформляем заголовок

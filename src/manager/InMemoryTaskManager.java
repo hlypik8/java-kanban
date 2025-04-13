@@ -105,7 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void newSubtask(Subtask subtask) {
         if (intersectionCheck(subtask)) {
-            throw new IllegalArgumentException("Подзадача пересекается с существующей");
+            throw new IllegalArgumentException("Подзадача пересекается по времени с существующей");
         }
         int id = nextSubtaskId++;
         subtask = new Subtask(id, subtask.getName(), subtask.getDescription(), subtask.getStatus(), subtask.getEpic(),

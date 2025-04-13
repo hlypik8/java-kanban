@@ -86,7 +86,7 @@ public class Epic extends Task {
         }
     }
 
-    public Optional<LocalDateTime> calculateEpicEndTime(){
+    public Optional<LocalDateTime> calculateEpicEndTime() {
         if (subtaskList.isEmpty()) {
             return Optional.of(LocalDateTime.now());//Если сабтасков нет, то устанавливаем время создания эпика
         } else {                                     // как время окончания эпика
@@ -98,7 +98,7 @@ public class Epic extends Task {
     }
 
     public void setEndTime() {
-        if (calculateEpicEndTime().isPresent()){
+        if (calculateEpicEndTime().isPresent()) {
             this.endTime = calculateEpicEndTime().get();
         }
     }
