@@ -26,18 +26,18 @@ public interface TaskManager {
 
     Subtask getSubtaskById(int id);
 
-    void newTask(Task task);
+    void newTask(Task task) throws IntersectionException;
 
     void newEpic(Epic epic);
 
-    void newSubtask(Subtask subtask);
+    void newSubtask(Subtask subtask) throws IntersectionException;
 
     //2e) Методы для обновления задачи, подзадачи и эпика
-    void updateTask(Task updatedTask);
+    void updateTask(Task updatedTask) throws IntersectionException;
 
     void updateEpic(Epic updatedEpic);
 
-    void updateSubtask(Subtask updatedSubtask);
+    void updateSubtask(Subtask updatedSubtask) throws IntersectionException;
 
     //2f) Методы для удаления задачи, подзадачи и эпика по id
     void deleteTaskById(int id);

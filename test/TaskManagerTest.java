@@ -20,7 +20,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     protected abstract T createManager();
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() throws IOException, IntersectionException {
         manager = createManager();
         task = new Task(100001, "Test task", "Description", Status.NEW,
                 LocalDateTime.of(2025, 4, 13, 3, 52), Duration.ZERO);
@@ -99,7 +99,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldUpdateTask() {
+    void shouldUpdateTask() throws IntersectionException {
         Task updatedTask = new Task(task.getId(), "Updated", "Updated", Status.DONE,
                 LocalDateTime.now(), Duration.ZERO);
         manager.updateTask(updatedTask);
@@ -114,7 +114,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldUpdateSubtask() {
+    void shouldUpdateSubtask() throws IntersectionException {
         Subtask updatedSubtask = new Subtask(subtask.getId(), "Updated", "Updated", Status.IN_PROGRESS, epic,
                 LocalDateTime.now(), Duration.ZERO);
         manager.updateSubtask(updatedSubtask);

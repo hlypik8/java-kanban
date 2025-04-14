@@ -39,7 +39,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) {
+    public static FileBackedTaskManager loadFromFile(File file) throws IntersectionException {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         try {
             String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
@@ -131,7 +131,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void newTask(Task task) {
+    public void newTask(Task task) throws IntersectionException {
         super.newTask(task);
         save();
     }
@@ -143,13 +143,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void newSubtask(Subtask subtask) {
+    public void newSubtask(Subtask subtask) throws IntersectionException {
         super.newSubtask(subtask);
         save();
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws IntersectionException {
         super.updateTask(task);
         save();
     }
@@ -161,7 +161,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws IntersectionException {
         super.updateSubtask(subtask);
         save();
     }

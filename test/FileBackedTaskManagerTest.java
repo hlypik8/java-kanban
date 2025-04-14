@@ -1,4 +1,5 @@
 import manager.FileBackedTaskManager;
+import manager.IntersectionException;
 import manager.ManagerSaveException;
 import model.*;
 import org.junit.jupiter.api.*;
@@ -18,7 +19,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     private File tempFile;
 
     @BeforeEach
-    void setUp() throws IOException { //Сделал так, потому что компилятор жалуется на необработанное и необъявленное
+    void setUp() throws IOException, IntersectionException { //Сделал так, потому что компилятор жалуется на необработанное и необъявленное
         tempFile = File.createTempFile("Test", ".csv");//исключение
         super.setUp();
     }
@@ -29,7 +30,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
-    void shouldSaveAndLoadEmptyManager() {
+    void shouldSaveAndLoadEmptyManager() throws IntersectionException {
         manager.save();
         manager.deleteAllTasks();
         manager.deleteAllEpics();
@@ -42,7 +43,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
-    void shouldUpdateTaskFromFile() {
+    void shouldUpdateTaskFromFile() throws IntersectionException {
         manager.newTask(task);
 
         Task updatedTask = new Task(100001, "Updated", "Updated", Status.DONE,
@@ -57,7 +58,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
-    void shouldDeleteTask() {
+    void shouldDeleteTask() throws IntersectionException {
         manager.getTaskById(task.getId());//Здесь получем таск по id, чтобы он добавился в историю,
         //иначе выбрасывается NullPointerException потому что в методе deleteTaskById() задача удаляется также и из
         // истории, а если её нет, то вылетает исключение. Нужно добавить обработку этого случая

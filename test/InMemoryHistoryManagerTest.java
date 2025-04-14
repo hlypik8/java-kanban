@@ -1,3 +1,4 @@
+import manager.IntersectionException;
 import manager.Managers;
 import manager.TaskManager;
 import model.Epic;
@@ -21,7 +22,7 @@ public class InMemoryHistoryManagerTest {
     private Subtask subtask;
 
     @BeforeEach
-    void setup() {
+    void setup() throws IntersectionException {
         tm = Managers.getDefault();
         task = new Task(100001, "Test task", "Description", Status.NEW,
                 LocalDateTime.now(), Duration.ZERO);

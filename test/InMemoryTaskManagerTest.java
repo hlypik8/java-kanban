@@ -1,6 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import manager.InMemoryTaskManager;
+import manager.IntersectionException;
 import model.*;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void shouldReactIfTasksOverlapping() {
+    void shouldReactIfTasksOverlapping() throws IntersectionException {
         //Проверим 3 случая: когда новая задача кончается после того, как начинается уже существующая,
         //когда новая задача начинается после начала существующей и кончается до конца существующей,
         //когда новая задача начинается до конца существующей
@@ -57,7 +58,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void shouldNotAddTasksWhichThrowsIntersectionException() {
+    void shouldNotAddTasksWhichThrowsIntersectionException() throws IntersectionException {
         manager.deleteAllTasks();
         manager.deleteAllEpics();
         manager.deleteAllSubtasks();
@@ -87,15 +88,10 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
 
         manager.newTask(normalTask);
-        manager.newTask(taskIntersectionTypeOne);
-        manager.newTask(taskIntersectionTypeTwo);
-        manager.newTask(taskIntersectionTypeThree);
 
-        assertEquals(1, manager.getTasksList().size());
-
-        manager.newTask(taskWhichDoesNotIntersects);
-
-        assertEquals(2, manager.getTasksList().size());
-
+        assertThrows(IntersectionException.class, () -> manager.newTask(taskIntersectionTypeOne));
+        assertThrows(IntersectionException.class, () -> manager.newTask(taskIntersectionTypeTwo));
+        assertThrows(IntersectionException.class, () -> manager.newTask(taskIntersectionTypeThree));
+        assertDoesNotThrow(() -> manager.newTask(taskWhichDoesNotIntersects));
     }
 }
