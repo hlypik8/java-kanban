@@ -14,11 +14,11 @@ public interface TaskManager {
 
     Collection<Subtask> getSubtasksList();
 
-    void deleteAllTasks() throws ManagerSaveException;
+    void deleteAllTasks();
 
-    void deleteAllEpics() throws ManagerSaveException;
+    void deleteAllEpics();
 
-    void deleteAllSubtasks() throws ManagerSaveException;
+    void deleteAllSubtasks();
 
     Task getTaskById(int id);
 
@@ -26,11 +26,11 @@ public interface TaskManager {
 
     Subtask getSubtaskById(int id);
 
-    void newTask(Task task) throws ManagerSaveException;
+    void newTask(Task task);
 
-    void newEpic(Epic epic) throws ManagerSaveException;
+    void newEpic(Epic epic);
 
-    void newSubtask(Subtask subtask) throws ManagerSaveException;
+    void newSubtask(Subtask subtask);
 
     //2e) Методы для обновления задачи, подзадачи и эпика
     void updateTask(Task updatedTask);

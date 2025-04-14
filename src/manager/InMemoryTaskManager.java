@@ -82,9 +82,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void newTask(Task task) {
-        if (intersectionCheck(task)) {
-            throw new IllegalArgumentException("Задача пересекается по времени с существующей");
+        try {
+            if (intersectionCheck(task)) {
+                throw new IntersectionException("Задача пересекается по времени с существующей");
+            }
+        } catch (IntersectionException e) {
+            System.out.println(e.getMessage());
+            return; //Если выбрасывается исключение, то завершаем работу метода
         }
+
         int id = nextTaskId++;
         task = new Task(id, task.getName(), task.getDescription(), task.getStatus(),
                 task.getStartTime(), task.getDuration());
@@ -104,8 +110,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void newSubtask(Subtask subtask) {
-        if (intersectionCheck(subtask)) {
-            throw new IllegalArgumentException("Подзадача пересекается по времени с существующей");
+        try {
+            if (intersectionCheck(subtask)) {
+                throw new IntersectionException("Подзадача пересекается по времени с существующей");
+            }
+        } catch (IntersectionException e) {
+            System.out.println(e.getMessage());
+            return;
         }
         int id = nextSubtaskId++;
         subtask = new Subtask(id, subtask.getName(), subtask.getDescription(), subtask.getStatus(), subtask.getEpic(),
@@ -124,8 +135,13 @@ public class InMemoryTaskManager implements TaskManager {
         Task existingTask = tasks.get(updatedTask.getId());//здесь удаляем и снова добавляем обновленную задачу
         prioritizedTasks.remove(tasks.get(updatedTask.getId()));//т.к. старая версия задачи оставалась бы в множестве
         if (existingTask != null) {
-            if (intersectionCheck(updatedTask)) {
-                throw new IllegalArgumentException("Обновленная версия задачи пресекается по времени с существующей!");
+            try {
+                if (intersectionCheck(updatedTask)) {
+                    throw new IntersectionException("Обновленная версия задачи пресекается по времени с существующей!");
+                }
+            } catch (IntersectionException e) {
+                System.out.println(e.getMessage());
+                return;
             }
             existingTask.update(updatedTask);// Обновляем задачу с сохранением id
             if (existingTask.getStartTime() != null) {
@@ -147,8 +163,12 @@ public class InMemoryTaskManager implements TaskManager {
         Subtask existingSubtask = subtasks.get(updatedSubtask.getId());
         prioritizedTasks.remove(subtasks.get(updatedSubtask.getId()));
         if (existingSubtask != null) {
-            if (intersectionCheck(updatedSubtask)) {
-                throw new IllegalArgumentException("Обновленная подзадача пересекается по времени с существующей!");
+            try {
+                if (intersectionCheck(updatedSubtask)) {
+                    throw new IntersectionException("Обновленная подзадача пересекается по времени с существующей!");
+                }
+            } catch (IntersectionException e) {
+                System.out.println(e.getMessage());
             }
             existingSubtask.update(updatedSubtask);
             if (existingSubtask.getStartTime() != null) {

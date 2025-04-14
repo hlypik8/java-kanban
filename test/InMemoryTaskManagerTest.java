@@ -57,33 +57,45 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void shouldThrowAnIllegalArgumentException() {
+    void shouldNotAddTasksWhichThrowsIntersectionException() {
+        manager.deleteAllTasks();
+        manager.deleteAllEpics();
+        manager.deleteAllSubtasks();
 
-        Task task = new Task(100001, "Test task", "Description", Status.NEW,
+        Task normalTask = new Task(100001, "Test task", "Description", Status.NEW,
                 LocalDateTime.of(2025, 4, 13, 21, 0), Duration.ofHours(2));
-        manager.newTask(task);
 
-        Task taskIncident1 = new Task(100002, "Test of incident 1",
+        Task taskIntersectionTypeOne = new Task(100002, "Test of incident 1",
                 "This task ends before the existing one ends.", Status.NEW,
                 LocalDateTime.of(2025, 4, 13, 20, 50), Duration.ofHours(1));
 
-        Task taskIncident2 = new Task(100003, "Test of incident 2",
+        Task taskIntersectionTypeTwo = new Task(100003, "Test of incident 2",
                 "This task starts after the beginning of the existing one" +
                         " and ends before the end of the existing one",
-                Status.NEW, LocalDateTime.of(2025, 4, 13, 21, 10), Duration.ofHours(1));
+                Status.NEW, LocalDateTime.of(2025, 4, 13, 21, 10),
+                Duration.ofHours(1));
 
-        Task taskIncident3 = new Task(100004, "Test of incident 3",
+        Task taskIntersectionTypeThree = new Task(100004, "Test of incident 3",
                 "This task starts before the end of the existing one",
-                Status.NEW, LocalDateTime.of(2025, 4, 13, 22, 50), Duration.ofHours(1));
+                Status.NEW, LocalDateTime.of(2025, 4, 13, 22, 50),
+                Duration.ofHours(1));
 
-        Task taskWhichDoesNotOverlaps = new Task(100005, "Test of task which does not overlaps",
+        Task taskWhichDoesNotIntersects = new Task(100005, "Test of task which does not overlaps",
                 "Should be ok",
-                Status.NEW, LocalDateTime.of(2025, 4, 13, 23, 10), Duration.ofHours(1));
+                Status.NEW, LocalDateTime.of(2025, 4, 13, 23, 10),
+                Duration.ofHours(1));
 
 
-        assertThrows(IllegalArgumentException.class, () -> manager.newTask(taskIncident1));
-        assertThrows(IllegalArgumentException.class, () -> manager.newTask(taskIncident2));
-        assertThrows(IllegalArgumentException.class, () -> manager.newTask(taskIncident3));
-        assertDoesNotThrow(() -> manager.newTask(taskWhichDoesNotOverlaps));
+        manager.newTask(normalTask);
+        manager.newTask(taskIntersectionTypeOne);
+        manager.newTask(taskIntersectionTypeTwo);
+        manager.newTask(taskIntersectionTypeThree);
+
+        assertEquals(1, manager.getTasksList().size());
+
+        manager.newTask(taskWhichDoesNotIntersects);
+
+        assertEquals(2, manager.getTasksList().size());
+
     }
 }

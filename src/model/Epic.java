@@ -64,9 +64,7 @@ public class Epic extends Task {
     }
 
     public void setEpicStartTime() {
-        if (calculateEpicStartTime().isPresent()) {
-            this.startTime = calculateEpicStartTime().get();
-        }
+        this.startTime = calculateEpicStartTime().orElse(LocalDateTime.now());
     }
 
     //Рассчитываем длительность эпика как сумму длительностей всех сабтасков
@@ -81,9 +79,7 @@ public class Epic extends Task {
     }
 
     public void setEpicDuration() {
-        if (calculateEpicDuration().isPresent()) {
-            this.duration = calculateEpicDuration().get();
-        }
+        this.duration = calculateEpicDuration().orElse(Duration.ZERO);
     }
 
     public Optional<LocalDateTime> calculateEpicEndTime() {

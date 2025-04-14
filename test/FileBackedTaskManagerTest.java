@@ -18,13 +18,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     private File tempFile;
 
     @BeforeEach
-    void setUp() {
-        try {
-            tempFile = File.createTempFile("Test", ".csv");
-            super.setUp();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    void setUp() throws IOException { //Сделал так, потому что компилятор жалуется на необработанное и необъявленное
+        tempFile = File.createTempFile("Test", ".csv");//исключение
+        super.setUp();
     }
 
     @Override

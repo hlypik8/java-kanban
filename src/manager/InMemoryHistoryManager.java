@@ -21,7 +21,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    private final Map<Integer, Node> historyHashMap = new HashMap<>();
+    private final Map<Integer, Node> historyMap = new HashMap<>();
     private Node tail;
     private Node head;
 
@@ -56,7 +56,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         //Очистка ссылок и удаление из HashMap
         node.prev = null;
         node.next = null;
-        historyHashMap.remove(node.task.getId());
+        historyMap.remove(node.task.getId());
     }
 
     @Override
@@ -64,13 +64,16 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
-        //Проверяем, существует ли задача
-        if (historyHashMap.containsKey(task.getId())) {
-            Node existingNode = historyHashMap.get(task.getId());
+        if (taskExists(task)) {
+            Node existingNode = historyMap.get(task.getId());
             removeNode(existingNode);
         }
         linkLast(task);
-        historyHashMap.put(task.getId(), tail);
+        historyMap.put(task.getId(), tail);
+    }
+
+    public boolean taskExists(Task task) {
+        return historyMap.containsKey(task.getId());
     }
 
     //Реализация метода получения истории просмотра
@@ -87,21 +90,21 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        Task taskToRemove = historyHashMap.get(id).task;
-        if (historyHashMap.containsKey(id)) {
+        Task taskToRemove = historyMap.get(id).task;
+        if (historyMap.containsKey(id)) {
             if (taskToRemove.getClass() == Epic.class) {
                 removeAllSubtaskInEpic(id);
             }
-            removeNode(historyHashMap.get(id));
+            removeNode(historyMap.get(id));
         }
     }
 
     public void removeAllSubtaskInEpic(int id) {
-        Epic epic = (Epic) historyHashMap.get(id).task;
+        Epic epic = (Epic) historyMap.get(id).task;
         epic.getSubtaskList().stream()
                 .map(Subtask::getId)
-                .filter(historyHashMap::containsKey)
-                .map(historyHashMap::get)
+                .filter(historyMap::containsKey)
+                .map(historyMap::get)
                 .forEach(this::removeNode);
     }
 }
