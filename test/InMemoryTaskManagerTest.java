@@ -1,55 +1,97 @@
 import static org.junit.jupiter.api.Assertions.*;
 
-import manager.ManagerSaveException;
-import manager.Managers;
-import manager.TaskManager;
+import manager.InMemoryTaskManager;
+import manager.IntersectionException;
 import model.*;
 import org.junit.jupiter.api.Test;
 
-class InMemoryTaskManagerTest {
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 
-    @Test
-    public void shouldAddNewTask() {
-        TaskManager tm = Managers.getDefault();
-        Task task = new Task(100001, "Test task", "Description", Status.NEW);
-        tm.newTask(task);
-        assertEquals(tm.getTaskById(100001), task);
+class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
+
+    @Override
+    protected InMemoryTaskManager createManager() {
+        return new InMemoryTaskManager();
     }
 
     @Test
-    public void shouldAddNewEpic() {
-        TaskManager tm = Managers.getDefault();
-        Epic epic = new Epic(200001, "Test epic", "Description");
-        tm.newEpic(epic);
-        assertEquals(tm.getEpicById(200001), epic);
+    void shouldReturnPrioritizedTasksInRightSequence() {
+        assertEquals(manager.getPrioritizedTasks(), List.of(task, subtask));
     }
 
     @Test
-    public void shouldAddNewSubtask() {
-        TaskManager tm = Managers.getDefault();
-        Epic epic = new Epic(200001, "Test epic", "Description");
-        tm.newEpic(epic);
-        Subtask subtask = new Subtask(300001, "Test subtask", "Description", Status.NEW, epic);
-        tm.newSubtask(subtask);
+    void shouldReactIfTasksOverlapping() throws IntersectionException {
+        //Проверим 3 случая: когда новая задача кончается после того, как начинается уже существующая,
+        //когда новая задача начинается после начала существующей и кончается до конца существующей,
+        //когда новая задача начинается до конца существующей
+        manager.deleteAllTasks(); //Удалим заранее подготовленные задачи
+        manager.deleteAllEpics();
+        manager.deleteAllSubtasks();
 
-        assertEquals(tm.getSubtaskById(300001), subtask);
+        Task task = new Task(100001, "Test task", "Description", Status.NEW,
+                LocalDateTime.of(2025, 4, 13, 21, 0), Duration.ofHours(2));
+        manager.newTask(task);
+
+        Task taskIncident1 = new Task(100002, "Test of incident 1",
+                "This task ends before the existing one ends.", Status.NEW,
+                LocalDateTime.of(2025, 4, 13, 20, 50), Duration.ofHours(1));
+
+        Task taskIncident2 = new Task(100003, "Test of incident 2",
+                "This task starts after the beginning of the existing one" +
+                        " and ends before the end of the existing one",
+                Status.NEW, LocalDateTime.of(2025, 4, 13, 21, 10), Duration.ofHours(1));
+
+        Task taskIncident3 = new Task(100004, "Test of incident 3",
+                "This task starts before the end of the existing one",
+                Status.NEW, LocalDateTime.of(2025, 4, 13, 22, 50), Duration.ofHours(1));
+
+        Task taskWhichDoesNotOverlaps = new Task(100005, "Test of task which does not overlaps",
+                "Should be ok",
+                Status.NEW, LocalDateTime.of(2025, 4, 13, 23, 10), Duration.ofHours(1));
+
+        assertTrue(manager.intersectionCheck(taskIncident1));
+        assertTrue(manager.intersectionCheck(taskIncident2));
+        assertTrue(manager.intersectionCheck(taskIncident3));
+        assertFalse(manager.intersectionCheck(taskWhichDoesNotOverlaps));
     }
 
     @Test
-    public void idsShouldNotConflict() {
-        TaskManager tm = Managers.getDefault();
-        Task task = new Task(100001, "Test", "Description", Status.NEW);
-        tm.newTask(task);
+    void shouldNotAddTasksWhichThrowsIntersectionException() throws IntersectionException {
+        manager.deleteAllTasks();
+        manager.deleteAllEpics();
+        manager.deleteAllSubtasks();
 
-        assertEquals(100001, tm.getTaskById(100001).getId());
-    }
+        Task normalTask = new Task(100001, "Test task", "Description", Status.NEW,
+                LocalDateTime.of(2025, 4, 13, 21, 0), Duration.ofHours(2));
 
-    @Test
-    public void tasksShouldHaveSameFields() {
-        TaskManager tm = Managers.getDefault();
-        Task task = new Task(100001, "Test", "Description", Status.NEW);
-        tm.newTask(task);
+        Task taskIntersectionTypeOne = new Task(100002, "Test of incident 1",
+                "This task ends before the existing one ends.", Status.NEW,
+                LocalDateTime.of(2025, 4, 13, 20, 50), Duration.ofHours(1));
 
-        assertEquals(new Task(100001, "Test", "Description", Status.NEW), tm.getTaskById(100001));
+        Task taskIntersectionTypeTwo = new Task(100003, "Test of incident 2",
+                "This task starts after the beginning of the existing one" +
+                        " and ends before the end of the existing one",
+                Status.NEW, LocalDateTime.of(2025, 4, 13, 21, 10),
+                Duration.ofHours(1));
+
+        Task taskIntersectionTypeThree = new Task(100004, "Test of incident 3",
+                "This task starts before the end of the existing one",
+                Status.NEW, LocalDateTime.of(2025, 4, 13, 22, 50),
+                Duration.ofHours(1));
+
+        Task taskWhichDoesNotIntersects = new Task(100005, "Test of task which does not overlaps",
+                "Should be ok",
+                Status.NEW, LocalDateTime.of(2025, 4, 13, 23, 10),
+                Duration.ofHours(1));
+
+
+        manager.newTask(normalTask);
+
+        assertThrows(IntersectionException.class, () -> manager.newTask(taskIntersectionTypeOne));
+        assertThrows(IntersectionException.class, () -> manager.newTask(taskIntersectionTypeTwo));
+        assertThrows(IntersectionException.class, () -> manager.newTask(taskIntersectionTypeThree));
+        assertDoesNotThrow(() -> manager.newTask(taskWhichDoesNotIntersects));
     }
 }

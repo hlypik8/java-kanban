@@ -1,4 +1,5 @@
 import manager.FileBackedTaskManager;
+import manager.IntersectionException;
 import manager.ManagerSaveException;
 import model.*;
 import org.junit.jupiter.api.*;
@@ -7,24 +8,33 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     private File tempFile;
-    private FileBackedTaskManager manager;
 
     @BeforeEach
-    void setUp() throws IOException {
-        tempFile = File.createTempFile("Test", ".csv");
-        manager = new FileBackedTaskManager(tempFile);
+    void setUp() throws IOException, IntersectionException { //Сделал так, потому что компилятор жалуется на необработанное и необъявленное
+        tempFile = File.createTempFile("Test", ".csv");//исключение
+        super.setUp();
+    }
+
+    @Override
+    protected FileBackedTaskManager createManager() {
+        return new FileBackedTaskManager(tempFile);
     }
 
     @Test
-    void shouldSaveAndLoadEmptyManager() {
+    void shouldSaveAndLoadEmptyManager() throws IntersectionException {
         manager.save();
+        manager.deleteAllTasks();
+        manager.deleteAllEpics();
+        manager.deleteAllSubtasks();
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
 
         assertTrue(loadedManager.getTasksList().isEmpty());
@@ -33,11 +43,11 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldUpdateTask() {
-        Task task = new Task(100001, "Original", "Original", Status.NEW);
+    void shouldUpdateTaskFromFile() throws IntersectionException {
         manager.newTask(task);
 
-        Task updatedTask = new Task(100001, "Updated", "Updated", Status.DONE);
+        Task updatedTask = new Task(100001, "Updated", "Updated", Status.DONE,
+                LocalDateTime.now(), Duration.ZERO);
         manager.updateTask(updatedTask);
 
         FileBackedTaskManager loaded = FileBackedTaskManager.loadFromFile(tempFile);
@@ -48,9 +58,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldDeleteTask() {
-        Task task = new Task(100001, "Task to delete", "Delete", Status.NEW);
-        manager.newTask(task);
+    void shouldDeleteTask() throws IntersectionException {
         manager.getTaskById(task.getId());//Здесь получем таск по id, чтобы он добавился в историю,
         //иначе выбрасывается NullPointerException потому что в методе deleteTaskById() задача удаляется также и из
         // истории, а если её нет, то вылетает исключение. Нужно добавить обработку этого случая
@@ -62,19 +70,12 @@ public class FileBackedTaskManagerTest {
 
     @Test
     void shouldKeepRightFormat() throws IOException {
-        Task task = new Task(100001, "Test", "Desc", Status.NEW);
-        Epic epic = new Epic(200001, "Test", "Desc");
-        Subtask subtask = new Subtask(300001, "Test", "Desc", Status.NEW, epic);
-        manager.newTask(task);
-        manager.newEpic(epic);
-        manager.newSubtask(subtask);
-
         List<String> lines = Files.readAllLines(tempFile.toPath(), StandardCharsets.UTF_8);
 
-        assertEquals("id,type,name,status,description,epic", lines.getFirst());
-        assertEquals("100001,TASK,Test,NEW,Desc", lines.get(1));
-        assertEquals("200001,EPIC,Test,NEW,Desc", lines.get(2));
-        assertEquals("300001,SUBTASK,Test,NEW,Desc,200001", lines.get(3));
+        assertEquals("id,type,name,status,description,startTime,duration,epic", lines.getFirst());
+        assertEquals("100001,TASK,Test task,NEW,Description,2025-04-13T03:52,PT0S", lines.get(1));
+        assertEquals("200001,EPIC,Test epic,NEW,Description,2025-04-14T03:52,PT0S", lines.get(2));
+        assertEquals("300001,SUBTASK,Test subtask,NEW,Description,2025-04-14T03:52,PT0S,200001", lines.get(3));
     }
 
 }

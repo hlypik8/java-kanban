@@ -1,6 +1,9 @@
 import org.junit.jupiter.api.Test;
 import manager.Managers;
 
+import java.io.File;
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ManagersTest {
@@ -15,5 +18,10 @@ class ManagersTest {
     @Test
     public void managersDefaultHistoryShouldNotBeNull() {
         assertNotNull(Managers.getDefaultHistory());
+    }
+
+    @Test
+    public void managersGetDefaultFileManagerShouldNotBeNull() throws IOException {
+        assertNotNull(Managers.getDefaultFileManager(File.createTempFile("Test", ".csv")));
     }
 }

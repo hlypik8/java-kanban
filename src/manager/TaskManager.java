@@ -14,11 +14,11 @@ public interface TaskManager {
 
     Collection<Subtask> getSubtasksList();
 
-    void deleteAllTasks() throws ManagerSaveException;
+    void deleteAllTasks();
 
-    void deleteAllEpics() throws ManagerSaveException;
+    void deleteAllEpics();
 
-    void deleteAllSubtasks() throws ManagerSaveException;
+    void deleteAllSubtasks();
 
     Task getTaskById(int id);
 
@@ -26,18 +26,18 @@ public interface TaskManager {
 
     Subtask getSubtaskById(int id);
 
-    void newTask(Task task) throws ManagerSaveException;
+    void newTask(Task task) throws IntersectionException;
 
-    void newEpic(Epic epic) throws ManagerSaveException;
+    void newEpic(Epic epic);
 
-    void newSubtask(Subtask subtask) throws ManagerSaveException;
+    void newSubtask(Subtask subtask) throws IntersectionException;
 
     //2e) Методы для обновления задачи, подзадачи и эпика
-    void updateTask(Task updatedTask);
+    void updateTask(Task updatedTask) throws IntersectionException;
 
     void updateEpic(Epic updatedEpic);
 
-    void updateSubtask(Subtask updatedSubtask);
+    void updateSubtask(Subtask updatedSubtask) throws IntersectionException;
 
     //2f) Методы для удаления задачи, подзадачи и эпика по id
     void deleteTaskById(int id);

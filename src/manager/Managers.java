@@ -19,7 +19,7 @@ public class Managers {
     }
 
     //Добавляем в утилитарный класс менеджер файлов
-    public static TaskManager getDefaultFile(File file) {
+    public static TaskManager getDefaultFileManager(File file) {
         return new FileBackedTaskManager(file);
     }
 }

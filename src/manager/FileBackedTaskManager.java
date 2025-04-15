@@ -5,6 +5,8 @@ import model.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -17,10 +19,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-            //Записываем сналчала заголовок, затем все задачи по очереди. Наверное не очень хорошо, что при каждом
+            //Записываем сначала заголовок, затем все задачи по очереди. Наверное не очень хорошо, что при каждом
             //вызове save() файл полностью переписывается заново, но я пока не придумал как реализовать
-            //метод, который  бы следил за всем записями
-            writer.write("id,type,name,status,description,epic\n"); //Оформляем заголовок
+            //метод, который бы следил за всем записями
+            writer.write("id,type,name,status,description,startTime,duration,epic\n"); //Оформляем заголовок
             for (Task t : getTasksList()) {
                 writer.write(toString(t) + "\n");
             }
@@ -37,7 +39,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) {
+    public static FileBackedTaskManager loadFromFile(File file) throws IntersectionException {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         try {
             String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
@@ -72,21 +74,25 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public String toString(Task task) {
         if (task.getType() == Type.SUBTASK) { //Если сабтаск, то формат записи в файл отличен от тасков и эпиков
             Subtask subtask = (Subtask) task;
-            return String.format("%d,%s,%s,%s,%s,%d",
+            return String.format("%d,%s,%s,%s,%s,%s,%s,%d",
                     subtask.getId(),
                     subtask.getType().toString(),
                     subtask.getName(),
                     subtask.getStatus().toString(),
                     subtask.getDescription(),
+                    subtask.getStartTime().toString(),
+                    subtask.getDuration().toString(),
                     subtask.getEpic().getId()
             );
         }
-        return String.format("%d,%s,%s,%s,%s",
+        return String.format("%d,%s,%s,%s,%s,%s,%s",
                 task.getId(),
                 task.getType().toString(),
                 task.getName(),
                 task.getStatus().toString(),
-                task.getDescription()
+                task.getDescription(),
+                task.getStartTime().toString(),
+                task.getDuration().toString()
         );
     }
 
@@ -97,19 +103,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = fields[2];
         Status status = Status.valueOf(fields[3]);
         String description = fields[4];
+        LocalDateTime startTime = LocalDateTime.parse(fields[5]);
+        Duration duration = Duration.parse(fields[6]);
         try {
             switch (type) {
                 case TASK:
-                    return new Task(id, name, description, status);
+                    return new Task(id, name, description, status, startTime, duration);
                 case EPIC:
                     return new Epic(id, name, description);
                 case SUBTASK:
-                    int epicId = Integer.parseInt(fields[5]);
+                    int epicId = Integer.parseInt(fields[7]);
                     Epic parentEpic = getEpicById(epicId);
                     if (parentEpic == null) {
                         throw new IllegalArgumentException("Эпик не найден " + epicId);
                     }
-                    Subtask subtask = new Subtask(id, name, description, status, parentEpic);
+                    Subtask subtask = new Subtask(id, name, description, status, parentEpic, startTime, duration);
                     parentEpic.addSubtask(subtask);
                     return subtask;
                 default:
@@ -123,7 +131,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void newTask(Task task) {
+    public void newTask(Task task) throws IntersectionException {
         super.newTask(task);
         save();
     }
@@ -135,13 +143,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void newSubtask(Subtask subtask) {
+    public void newSubtask(Subtask subtask) throws IntersectionException {
         super.newSubtask(subtask);
         save();
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws IntersectionException {
         super.updateTask(task);
         save();
     }
@@ -153,7 +161,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws IntersectionException {
         super.updateSubtask(subtask);
         save();
     }
