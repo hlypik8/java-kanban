@@ -1,7 +1,7 @@
-package manager;
+package manager.exceptions;
 
 public class ManagerLoadException extends RuntimeException {
-    ManagerLoadException(final String message) {
+    public ManagerLoadException(final String message) {
         super(message);
     }
 }

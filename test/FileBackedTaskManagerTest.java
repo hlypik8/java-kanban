@@ -1,6 +1,6 @@
 import manager.FileBackedTaskManager;
-import manager.IntersectionException;
-import manager.ManagerSaveException;
+import manager.exceptions.IntersectionException;
+import manager.exceptions.NotFoundException;
 import model.*;
 import org.junit.jupiter.api.*;
 
@@ -43,7 +43,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
-    void shouldUpdateTaskFromFile() throws IntersectionException {
+    void shouldUpdateTaskFromFile() throws IntersectionException, NotFoundException {
         manager.newTask(task);
 
         Task updatedTask = new Task(100001, "Updated", "Updated", Status.DONE,
@@ -58,7 +58,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
-    void shouldDeleteTask() throws IntersectionException {
+    void shouldDeleteTask() throws IntersectionException, NotFoundException {
         manager.getTaskById(task.getId());//Здесь получем таск по id, чтобы он добавился в историю,
         //иначе выбрасывается NullPointerException потому что в методе deleteTaskById() задача удаляется также и из
         // истории, а если её нет, то вылетает исключение. Нужно добавить обработку этого случая

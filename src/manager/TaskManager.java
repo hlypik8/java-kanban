@@ -1,6 +1,8 @@
 //Интерфес TaskManager для дальнейшей разработки
 package manager;
 
+import manager.exceptions.IntersectionException;
+import manager.exceptions.NotFoundException;
 import model.*;
 
 import java.util.Collection;
@@ -20,7 +22,7 @@ public interface TaskManager {
 
     void deleteAllSubtasks();
 
-    Task getTaskById(int id);
+    Task getTaskById(int id) throws NotFoundException;
 
     Epic getEpicById(int id);
 

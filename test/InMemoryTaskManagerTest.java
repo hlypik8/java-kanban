@@ -1,7 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import manager.InMemoryTaskManager;
-import manager.IntersectionException;
+import manager.exceptions.IntersectionException;
 import model.*;
 import org.junit.jupiter.api.Test;
 

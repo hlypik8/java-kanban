@@ -1,6 +1,7 @@
-import manager.IntersectionException;
+import manager.exceptions.IntersectionException;
 import manager.Managers;
 import manager.TaskManager;
+import manager.exceptions.NotFoundException;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -35,16 +36,16 @@ public class InMemoryHistoryManagerTest {
     }
 
 
-    //Тестировнаие добавления задач в историю
+    //Тестирование добавления задач в историю
     @Test
-    void shouldAddTask() {
+    void shouldAddTask() throws NotFoundException {
         tm.getTaskById(task.getId());
 
         assertEquals(List.of(task), tm.getHistory());
     }
 
     @Test
-    void shouldAddDifferentTaskTypes() {
+    void shouldAddDifferentTaskTypes() throws NotFoundException {
         tm.getTaskById(task.getId());
         tm.getEpicById(epic.getId());
         tm.getSubtaskById(subtask.getId());
@@ -53,7 +54,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldNotAddDuplicateTask() {
+    void shouldNotAddDuplicateTask() throws NotFoundException {
         tm.getTaskById(task.getId());
         tm.getEpicById(epic.getId());
         tm.getTaskById(task.getId());
@@ -63,7 +64,7 @@ public class InMemoryHistoryManagerTest {
 
     //Тестирование удаления задач
     @Test
-    void shouldRemoveTask() {
+    void shouldRemoveTask() throws NotFoundException {
         tm.getTaskById(task.getId());
         tm.deleteTaskById(task.getId());
 
@@ -71,7 +72,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveMiddleNode() {
+    void shouldRemoveMiddleNode() throws NotFoundException {
         tm.getEpicById(epic.getId());
         tm.getTaskById(task.getId());
         tm.getSubtaskById(subtask.getId());
@@ -82,7 +83,7 @@ public class InMemoryHistoryManagerTest {
 
     //Тестирование порядка истории
     @Test
-    void shouldKeepOrder() {
+    void shouldKeepOrder() throws NotFoundException {
         tm.getTaskById(task.getId());
         tm.getEpicById(epic.getId());
         tm.getSubtaskById(subtask.getId());

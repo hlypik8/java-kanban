@@ -1,3 +1,5 @@
+import manager.exceptions.IntersectionException;
+import manager.exceptions.NotFoundException;
 import model.*;
 import manager.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +71,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldReturnTask() {
+    void shouldReturnTask() throws NotFoundException {
         assertEquals(task, manager.getTaskById(task.getId()));
     }
 
@@ -84,7 +86,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldAddNewTask() {
+    void shouldAddNewTask() throws NotFoundException {
         assertEquals(task, manager.getTaskById(task.getId()));
     }
 
@@ -99,7 +101,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldUpdateTask() throws IntersectionException {
+    void shouldUpdateTask() throws IntersectionException, NotFoundException {
         Task updatedTask = new Task(task.getId(), "Updated", "Updated", Status.DONE,
                 LocalDateTime.now(), Duration.ZERO);
         manager.updateTask(updatedTask);
@@ -127,12 +129,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void idsShouldNotConflict() {
+    public void idsShouldNotConflict() throws NotFoundException {
         assertEquals(100001, manager.getTaskById(task.getId()).getId());
     }
 
     @Test
-    public void tasksShouldHaveSameFields() {
+    public void tasksShouldHaveSameFields() throws NotFoundException {
         assertEquals(new Task(100001, "Test task", "Description", Status.NEW,
                 LocalDateTime.now(), Duration.ZERO), manager.getTaskById(100001));
     }

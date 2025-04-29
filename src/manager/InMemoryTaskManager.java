@@ -1,5 +1,6 @@
 package manager;
 
+import manager.exceptions.*;
 import model.*;
 
 import java.time.LocalDateTime;
@@ -58,8 +59,11 @@ public class InMemoryTaskManager implements TaskManager {
     //2c) Методы получения задачи, подзадачи и эпика по id
 
     @Override
-    public Task getTaskById(int id) {
+    public Task getTaskById(int id) throws NotFoundException {
         Task currentTask = tasks.get(id);
+        if (currentTask == null) {
+            throw new NotFoundException("Задача не найдена!");
+        }
         historyManager.add(new Task(currentTask));
         return currentTask;
     }
