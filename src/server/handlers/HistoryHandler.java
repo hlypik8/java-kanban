@@ -1,8 +1,8 @@
-package manager.server.handlers;
+package server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
-import manager.server.Endpoint;
+import server.Endpoint;
 
 import java.io.IOException;
 

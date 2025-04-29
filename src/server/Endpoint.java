@@ -1,4 +1,4 @@
-package manager.server;
+package server;
 
 public enum Endpoint {
     GET,

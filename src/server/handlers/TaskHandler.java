@@ -1,11 +1,11 @@
-package manager.server.handlers;
+package server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 import manager.exceptions.IntersectionException;
 import manager.exceptions.NotFoundException;
 import model.Task;
-import manager.server.Endpoint;
+import server.Endpoint;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,7 +69,7 @@ public class TaskHandler extends BaseHttpHandler {
     private void postTask(HttpExchange httpExchange) throws IOException {
         InputStream stream = httpExchange.getRequestBody();
         String taskString = new String(stream.readAllBytes());
-        if (taskString.isEmpty()) {
+        if (taskString.isEmpty() || taskString.isBlank()) {
             sendBadRequest(httpExchange);
             return;
         }

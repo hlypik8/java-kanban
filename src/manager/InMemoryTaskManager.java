@@ -69,15 +69,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpicById(int id) {
+    public Epic getEpicById(int id) throws NotFoundException {
         Epic currentEpic = epics.get(id);
+        if(currentEpic == null){
+            throw new NotFoundException("Эпик не найден!");
+        }
         historyManager.add(new Epic(currentEpic));
         return currentEpic;
     }
 
     @Override
-    public Subtask getSubtaskById(int id) {
+    public Subtask getSubtaskById(int id) throws NotFoundException {
         Subtask currentSubtask = subtasks.get(id);
+        if(currentSubtask == null){
+            throw new NotFoundException("Сабтаск не найден!");
+        }
         historyManager.add(new Subtask(currentSubtask, currentSubtask.getEpic()));
         return currentSubtask;
     }

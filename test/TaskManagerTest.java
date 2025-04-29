@@ -76,12 +76,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldReturnEpic() {
+    void shouldReturnEpic() throws NotFoundException {
         assertEquals(epic, manager.getEpicById(epic.getId()));
     }
 
     @Test
-    void shouldReturnSubtask() {
+    void shouldReturnSubtask() throws NotFoundException {
         assertEquals(subtask, manager.getSubtaskById(subtask.getId()));
     }
 
@@ -91,12 +91,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldAddNewEpic() {
+    void shouldAddNewEpic() throws NotFoundException {
         assertEquals(epic, manager.getEpicById(epic.getId()));
     }
 
     @Test
-    void shouldAddNewSubtask() {
+    void shouldAddNewSubtask() throws NotFoundException {
         assertEquals(subtask, manager.getSubtaskById(subtask.getId()));
     }
 
@@ -109,14 +109,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldUpdateEpic() {
+    void shouldUpdateEpic() throws NotFoundException {
         Epic updatedEpic = new Epic(epic.getId(), "Updated", "Updated");
         manager.updateEpic(updatedEpic);
         assertEquals("Updated", manager.getEpicById(epic.getId()).getName());
     }
 
     @Test
-    void shouldUpdateSubtask() throws IntersectionException {
+    void shouldUpdateSubtask() throws IntersectionException, NotFoundException {
         Subtask updatedSubtask = new Subtask(subtask.getId(), "Updated", "Updated", Status.IN_PROGRESS, epic,
                 LocalDateTime.now(), Duration.ZERO);
         manager.updateSubtask(updatedSubtask);

@@ -24,9 +24,9 @@ public interface TaskManager {
 
     Task getTaskById(int id) throws NotFoundException;
 
-    Epic getEpicById(int id);
+    Epic getEpicById(int id) throws NotFoundException;
 
-    Subtask getSubtaskById(int id);
+    Subtask getSubtaskById(int id) throws NotFoundException;
 
     void newTask(Task task) throws IntersectionException;
 

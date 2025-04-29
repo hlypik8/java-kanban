@@ -92,7 +92,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void testEpicSubtaskIntegrity() {
+    void testEpicSubtaskIntegrity() throws NotFoundException {
         tm.getEpicById(epic.getId());
         tm.getSubtaskById(subtask.getId());
         tm.deleteSubtaskById(subtask.getId());
@@ -101,7 +101,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldDeleteSubtask() {
+    void shouldDeleteSubtask() throws NotFoundException {
         tm.getEpicById(epic.getId());
         tm.getSubtaskById(subtask.getId());
         tm.deleteEpicById(epic.getId());
