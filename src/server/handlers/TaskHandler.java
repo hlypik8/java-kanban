@@ -33,7 +33,7 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
-        String paths[] = requestPath.split("/");
+        String[] paths = requestPath.split("/");
         if (paths.length <= 3 && paths[1].equals("tasks")) {
             switch (requestMethod) {
                 case "GET":
