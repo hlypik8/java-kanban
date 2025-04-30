@@ -15,7 +15,7 @@ public class GsonCreator {
             .setPrettyPrinting()
             .create();
 
-    public static Gson getGson(){
+    public static Gson getGson() {
         return GSON;
     }
 }
