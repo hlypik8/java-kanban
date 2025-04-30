@@ -18,6 +18,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PrioritizedTaskHandlerTest {
@@ -42,9 +43,9 @@ class PrioritizedTaskHandlerTest {
     @Test
     void getPrioritized_ReturnsTasksInOrder() throws Exception {
         // Создаем задачи с разным временем начала
-        Task task1 = new Task(100001,"Task 1", "Desc", Status.NEW,
+        Task task1 = new Task(100001, "Task 1", "Desc", Status.NEW,
                 LocalDateTime.parse("2024-01-01T10:00"), Duration.ofHours(1));
-        Task task2 = new Task(100002, "Task 2", "Desc",Status.NEW,
+        Task task2 = new Task(100002, "Task 2", "Desc", Status.NEW,
                 LocalDateTime.parse("2024-01-01T09:00"), Duration.ofHours(1));
 
         taskManager.newTask(task1);

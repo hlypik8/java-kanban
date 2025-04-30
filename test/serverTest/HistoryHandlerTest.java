@@ -19,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class HistoryHandlerTest {
@@ -45,9 +46,9 @@ class HistoryHandlerTest {
         // Создаем задачи и добавляем их в историю
         Task task = new Task(100001, "Test", "Description", Status.NEW,
                 LocalDateTime.now(), Duration.ZERO);
-                taskManager.newTask(task);
-        Epic epic = new Epic(200001,"Test Epic", "Description");
-                taskManager.newEpic(epic);
+        taskManager.newTask(task);
+        Epic epic = new Epic(200001, "Test Epic", "Description");
+        taskManager.newEpic(epic);
         taskManager.getTaskById(task.getId());
         taskManager.getEpicById(epic.getId());
 

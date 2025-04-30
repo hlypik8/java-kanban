@@ -137,7 +137,7 @@ class SubtaskHandlerTest {
     @Test
     void postSubtask_Returns406ForIntersection() throws Exception {
         // Создаем подзадачу с пересекающимся временем
-        Subtask overlappingSubtask = new Subtask(300002,"Overlap", "Desc",Status.NEW, testEpic,
+        Subtask overlappingSubtask = new Subtask(300002, "Overlap", "Desc", Status.NEW, testEpic,
                 LocalDateTime.now().plusMinutes(30), Duration.ofHours(1));
         String json = gson.toJson(overlappingSubtask);
 

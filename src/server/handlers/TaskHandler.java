@@ -92,7 +92,7 @@ public class TaskHandler extends BaseHttpHandler {
             } catch (IntersectionException e) {
                 sendHasIntersections(httpExchange);//Ошибка пересечения при обновлении
             }
-        } catch (JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             sendBadRequest(httpExchange);
         }
     }

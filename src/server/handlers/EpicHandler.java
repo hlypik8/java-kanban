@@ -95,7 +95,7 @@ public class EpicHandler extends BaseHttpHandler {
                 taskManager.newEpic(epic);
                 sendText(httpExchange, "Эпик успешно добавлен", 201);
             }
-        }catch (JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             sendBadRequest(httpExchange);
         }
     }

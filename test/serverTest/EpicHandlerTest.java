@@ -42,7 +42,7 @@ class EpicHandlerTest {
         server.start();
 
         // Создаем тестовый эпик
-        testEpic = new Epic(200001,"Test Epic", "Description");
+        testEpic = new Epic(200001, "Test Epic", "Description");
         taskManager.newEpic(testEpic);
     }
 
@@ -95,8 +95,8 @@ class EpicHandlerTest {
     @Test
     void getSubtasksInEpic_ReturnsSubtasks() throws Exception {
         // Добавляем подзадачу
-        Subtask subtask = new Subtask(300001,"Subtask", "Desc", Status.NEW, testEpic
-        ,LocalDateTime.now(), Duration.ZERO);
+        Subtask subtask = new Subtask(300001, "Subtask", "Desc", Status.NEW, testEpic
+                , LocalDateTime.now(), Duration.ZERO);
         taskManager.newSubtask(subtask);
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -113,7 +113,7 @@ class EpicHandlerTest {
     // Тест POST /epics
     @Test
     void postEpic_CreatesNewEpic() throws Exception {
-        Epic newEpic = new Epic(200002,"New Epic", "New Desc");
+        Epic newEpic = new Epic(200002, "New Epic", "New Desc");
         String json = gson.toJson(newEpic);
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -130,7 +130,7 @@ class EpicHandlerTest {
 
     @Test
     void postEpic_UpdatesExistingEpic() throws Exception {
-        Epic newEpic = new Epic(200001,"New Epic", "New Desc");
+        Epic newEpic = new Epic(200001, "New Epic", "New Desc");
         taskManager.updateEpic(newEpic);
         String json = gson.toJson(newEpic);
 
