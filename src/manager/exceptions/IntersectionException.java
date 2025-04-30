@@ -1,7 +1,7 @@
-package manager;
+package manager.exceptions;
 
 public class IntersectionException extends Exception {
-    IntersectionException(final String message) {
+    public IntersectionException(final String message) {
         super(message);
     }
 }

@@ -1,5 +1,8 @@
 package manager;
 
+import manager.exceptions.IntersectionException;
+import manager.exceptions.ManagerLoadException;
+import manager.exceptions.ManagerSaveException;
 import model.*;
 
 import java.io.*;

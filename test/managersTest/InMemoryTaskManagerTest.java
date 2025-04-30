@@ -1,8 +1,11 @@
+package managersTest;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import manager.InMemoryTaskManager;
-import manager.IntersectionException;
+import manager.exceptions.IntersectionException;
 import model.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -18,7 +21,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     @Test
     void shouldReturnPrioritizedTasksInRightSequence() {
-        assertEquals(manager.getPrioritizedTasks(), List.of(task, subtask));
+        Assertions.assertEquals(manager.getPrioritizedTasks(), List.of(task, subtask));
     }
 
     @Test
@@ -51,10 +54,10 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 "Should be ok",
                 Status.NEW, LocalDateTime.of(2025, 4, 13, 23, 10), Duration.ofHours(1));
 
-        assertTrue(manager.intersectionCheck(taskIncident1));
-        assertTrue(manager.intersectionCheck(taskIncident2));
-        assertTrue(manager.intersectionCheck(taskIncident3));
-        assertFalse(manager.intersectionCheck(taskWhichDoesNotOverlaps));
+        Assertions.assertTrue(manager.intersectionCheck(taskIncident1));
+        Assertions.assertTrue(manager.intersectionCheck(taskIncident2));
+        Assertions.assertTrue(manager.intersectionCheck(taskIncident3));
+        Assertions.assertFalse(manager.intersectionCheck(taskWhichDoesNotOverlaps));
     }
 
     @Test

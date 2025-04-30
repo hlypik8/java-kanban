@@ -1,3 +1,7 @@
+package managersTest;
+
+import manager.exceptions.IntersectionException;
+import manager.exceptions.NotFoundException;
 import model.*;
 import manager.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,37 +73,37 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldReturnTask() {
+    void shouldReturnTask() throws NotFoundException {
         assertEquals(task, manager.getTaskById(task.getId()));
     }
 
     @Test
-    void shouldReturnEpic() {
+    void shouldReturnEpic() throws NotFoundException {
         assertEquals(epic, manager.getEpicById(epic.getId()));
     }
 
     @Test
-    void shouldReturnSubtask() {
+    void shouldReturnSubtask() throws NotFoundException {
         assertEquals(subtask, manager.getSubtaskById(subtask.getId()));
     }
 
     @Test
-    void shouldAddNewTask() {
+    void shouldAddNewTask() throws NotFoundException {
         assertEquals(task, manager.getTaskById(task.getId()));
     }
 
     @Test
-    void shouldAddNewEpic() {
+    void shouldAddNewEpic() throws NotFoundException {
         assertEquals(epic, manager.getEpicById(epic.getId()));
     }
 
     @Test
-    void shouldAddNewSubtask() {
+    void shouldAddNewSubtask() throws NotFoundException {
         assertEquals(subtask, manager.getSubtaskById(subtask.getId()));
     }
 
     @Test
-    void shouldUpdateTask() throws IntersectionException {
+    void shouldUpdateTask() throws IntersectionException, NotFoundException {
         Task updatedTask = new Task(task.getId(), "Updated", "Updated", Status.DONE,
                 LocalDateTime.now(), Duration.ZERO);
         manager.updateTask(updatedTask);
@@ -107,14 +111,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldUpdateEpic() {
+    void shouldUpdateEpic() throws NotFoundException {
         Epic updatedEpic = new Epic(epic.getId(), "Updated", "Updated");
         manager.updateEpic(updatedEpic);
         assertEquals("Updated", manager.getEpicById(epic.getId()).getName());
     }
 
     @Test
-    void shouldUpdateSubtask() throws IntersectionException {
+    void shouldUpdateSubtask() throws IntersectionException, NotFoundException {
         Subtask updatedSubtask = new Subtask(subtask.getId(), "Updated", "Updated", Status.IN_PROGRESS, epic,
                 LocalDateTime.now(), Duration.ZERO);
         manager.updateSubtask(updatedSubtask);
@@ -127,12 +131,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void idsShouldNotConflict() {
+    public void idsShouldNotConflict() throws NotFoundException {
         assertEquals(100001, manager.getTaskById(task.getId()).getId());
     }
 
     @Test
-    public void tasksShouldHaveSameFields() {
+    public void tasksShouldHaveSameFields() throws NotFoundException {
         assertEquals(new Task(100001, "Test task", "Description", Status.NEW,
                 LocalDateTime.now(), Duration.ZERO), manager.getTaskById(100001));
     }

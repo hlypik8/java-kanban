@@ -1,5 +1,6 @@
 package manager;
 
+import manager.exceptions.*;
 import model.*;
 
 import java.time.LocalDateTime;
@@ -58,22 +59,31 @@ public class InMemoryTaskManager implements TaskManager {
     //2c) Методы получения задачи, подзадачи и эпика по id
 
     @Override
-    public Task getTaskById(int id) {
+    public Task getTaskById(int id) throws NotFoundException {
         Task currentTask = tasks.get(id);
+        if (currentTask == null) {
+            throw new NotFoundException("Задача не найдена!");
+        }
         historyManager.add(new Task(currentTask));
         return currentTask;
     }
 
     @Override
-    public Epic getEpicById(int id) {
+    public Epic getEpicById(int id) throws NotFoundException {
         Epic currentEpic = epics.get(id);
+        if (currentEpic == null) {
+            throw new NotFoundException("Эпик не найден!");
+        }
         historyManager.add(new Epic(currentEpic));
         return currentEpic;
     }
 
     @Override
-    public Subtask getSubtaskById(int id) {
+    public Subtask getSubtaskById(int id) throws NotFoundException {
         Subtask currentSubtask = subtasks.get(id);
+        if (currentSubtask == null) {
+            throw new NotFoundException("Сабтаск не найден!");
+        }
         historyManager.add(new Subtask(currentSubtask, currentSubtask.getEpic()));
         return currentSubtask;
     }
