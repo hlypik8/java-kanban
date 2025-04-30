@@ -1,3 +1,5 @@
+package managersTest;
+
 import manager.exceptions.IntersectionException;
 import manager.exceptions.NotFoundException;
 import model.*;

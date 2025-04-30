@@ -1,5 +1,6 @@
 package server.handlers;
 
+import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 import manager.exceptions.IntersectionException;
@@ -73,22 +74,26 @@ public class TaskHandler extends BaseHttpHandler {
             sendBadRequest(httpExchange);
             return;
         }
-        Task task = gson.fromJson(taskString, Task.class);
         try {
-            //Пытаемся обновить задачу (если она существует)
-            taskManager.getTaskById(task.getId()); //Проверяем существование
-            taskManager.updateTask(task); // Обновляем
-            sendText(httpExchange, "Задача успешно обновлена", 201);
-        } catch (NotFoundException e) {
-            //Если задача не найдена, то добавляем как новую
+            Task task = gson.fromJson(taskString, Task.class);
             try {
-                taskManager.newTask(task);
-                sendText(httpExchange, "Задача успешно добавлена", 201);
-            } catch (IntersectionException ex) {
-                sendHasIntersections(httpExchange); //Ошибка пересечения при добавлении
+                //Пытаемся обновить задачу (если она существует)
+                taskManager.getTaskById(task.getId()); //Проверяем существование
+                taskManager.updateTask(task); // Обновляем
+                sendText(httpExchange, "Задача успешно обновлена", 201);
+            } catch (NotFoundException e) {
+                //Если задача не найдена, то добавляем как новую
+                try {
+                    taskManager.newTask(task);
+                    sendText(httpExchange, "Задача успешно добавлена", 201);
+                } catch (IntersectionException ex) {
+                    sendHasIntersections(httpExchange); //Ошибка пересечения при добавлении
+                }
+            } catch (IntersectionException e) {
+                sendHasIntersections(httpExchange);//Ошибка пересечения при обновлении
             }
-        } catch (IntersectionException e) {
-            sendHasIntersections(httpExchange);//Ошибка пересечения при обновлении
+        } catch (JsonSyntaxException e){
+            sendBadRequest(httpExchange);
         }
     }
 

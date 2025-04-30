@@ -1,5 +1,6 @@
 package server.handlers;
 
+import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 import manager.exceptions.NotFoundException;
@@ -84,14 +85,18 @@ public class EpicHandler extends BaseHttpHandler {
             sendBadRequest(httpExchange);
             return;
         }
-        Epic epic = gson.fromJson(epicStr, Epic.class);
         try {
-            taskManager.getEpicById(epic.getId());
-            taskManager.updateEpic(epic);
-            sendText(httpExchange, "Эпик успешно обновлен", 201);
-        } catch (NotFoundException e) {
-            taskManager.newEpic(epic);
-            sendText(httpExchange, "Эпик успешно добавлен", 201);
+            Epic epic = gson.fromJson(epicStr, Epic.class);
+            try {
+                taskManager.getEpicById(epic.getId());
+                taskManager.updateEpic(epic);
+                sendText(httpExchange, "Эпик успешно обновлен", 201);
+            } catch (NotFoundException e) {
+                taskManager.newEpic(epic);
+                sendText(httpExchange, "Эпик успешно добавлен", 201);
+            }
+        }catch (JsonSyntaxException e){
+            sendBadRequest(httpExchange);
         }
     }
 

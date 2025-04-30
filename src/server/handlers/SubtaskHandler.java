@@ -1,5 +1,6 @@
 package server.handlers;
 
+import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 import manager.exceptions.IntersectionException;
@@ -75,23 +76,27 @@ public class SubtaskHandler extends BaseHttpHandler {
             return;
         }
 
-        Subtask subtask = gson.fromJson(subtaskStr, Subtask.class);
-
         try {
-            //Пытаемся обновить сабтаск (если он существует)
-            taskManager.getSubtaskById(subtask.getId());
-            taskManager.updateSubtask(subtask);
-            sendText(httpExchange, "Сабтаск успешно обновлен", 201);
-        } catch (NotFoundException e) {
-            //Если сабтаск не найден, то добавляем как новый
+            Subtask subtask = gson.fromJson(subtaskStr, Subtask.class);
+
             try {
-                taskManager.newSubtask(subtask);
-                sendText(httpExchange, "Сабтаск успешно добавлен", 201);
-            } catch (IntersectionException ex) {
-                sendHasIntersections(httpExchange);//Ошибка пересечения при добавлении
+                //Пытаемся обновить сабтаск (если он существует)
+                taskManager.getSubtaskById(subtask.getId());
+                taskManager.updateSubtask(subtask);
+                sendText(httpExchange, "Сабтаск успешно обновлен", 201);
+            } catch (NotFoundException e) {
+                //Если сабтаск не найден, то добавляем как новый
+                try {
+                    taskManager.newSubtask(subtask);
+                    sendText(httpExchange, "Сабтаск успешно добавлен", 201);
+                } catch (IntersectionException ex) {
+                    sendHasIntersections(httpExchange);//Ошибка пересечения при добавлении
+                }
+            } catch (IntersectionException e) {
+                sendHasIntersections(httpExchange);//Ошибка пересечения при обновлении
             }
-        } catch (IntersectionException e) {
-            sendHasIntersections(httpExchange);//Ошибка пересечения при обновлении
+        }catch (JsonSyntaxException e){
+            sendBadRequest(httpExchange);
         }
     }
 

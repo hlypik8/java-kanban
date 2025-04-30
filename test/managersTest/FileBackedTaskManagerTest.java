@@ -1,3 +1,5 @@
+package managersTest;
+
 import manager.FileBackedTaskManager;
 import manager.exceptions.IntersectionException;
 import manager.exceptions.NotFoundException;

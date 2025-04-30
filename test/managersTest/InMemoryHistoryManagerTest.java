@@ -1,3 +1,5 @@
+package managersTest;
+
 import manager.exceptions.IntersectionException;
 import manager.Managers;
 import manager.TaskManager;
