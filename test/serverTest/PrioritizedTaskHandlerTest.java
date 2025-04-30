@@ -9,9 +9,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.HttpTaskServer;
+import server.handlers.GsonCreator;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -25,7 +25,7 @@ class PrioritizedTaskHandlerTest {
     private TaskManager taskManager;
     private HttpTaskServer server;
     private final HttpClient client = HttpClient.newHttpClient();
-    private final Gson gson = new Gson();
+    private final Gson gson = GsonCreator.getGson();
 
     @BeforeEach
     void setUp() throws IOException {
@@ -51,10 +51,7 @@ class PrioritizedTaskHandlerTest {
         taskManager.newTask(task1);
         taskManager.newTask(task2);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/prioritized"))
-                .GET()
-                .build();
+        HttpRequest request = HttpTestClient.get("/prioritized");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         List<Task> prioritized = gson.fromJson(response.body(), List.class);
@@ -67,10 +64,8 @@ class PrioritizedTaskHandlerTest {
     // GET /prioritized (пустой список)
     @Test
     void getPrioritized_ReturnsEmptyList() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/prioritized"))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/prioritized");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -81,10 +76,8 @@ class PrioritizedTaskHandlerTest {
     // GET /prioritized с неверным методом (POST)
     @Test
     void getPrioritized_Returns405ForInvalidMethod() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/prioritized"))
-                .POST(HttpRequest.BodyPublishers.noBody())
-                .build();
+
+        HttpRequest request = HttpTestClient.post("/prioritized", "");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -94,10 +87,8 @@ class PrioritizedTaskHandlerTest {
     // GET /prioritized/invalid (неверный путь)
     @Test
     void getPrioritized_Returns405ForInvalidPath() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/prioritized/invalid"))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/prioritized/invalid");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 

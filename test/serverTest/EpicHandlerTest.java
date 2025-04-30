@@ -1,7 +1,6 @@
 package serverTest;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
 import model.Epic;
@@ -11,11 +10,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.HttpTaskServer;
-import server.handlers.adapters.DurationAdapter;
-import server.handlers.adapters.LocalDateTimeAdapter;
+import server.handlers.GsonCreator;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -28,11 +25,7 @@ class EpicHandlerTest {
     private TaskManager taskManager;
     private HttpTaskServer server;
     private final HttpClient client = HttpClient.newHttpClient();
-    private final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .setPrettyPrinting()
-            .create();
+    private final Gson gson = GsonCreator.getGson();
     private Epic testEpic;
 
     @BeforeEach
@@ -54,10 +47,7 @@ class EpicHandlerTest {
     // Тест GET /epics
     @Test
     void getEpics_ReturnsEpicsList() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/epics"))
-                .GET()
-                .build();
+        HttpRequest request = HttpTestClient.get("/epics");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -68,10 +58,8 @@ class EpicHandlerTest {
     // Тест GET /epics/{id}
     @Test
     void getEpicById_ReturnsEpic() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/epics/" + testEpic.getId()))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/epics/" + testEpic.getId());
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -81,10 +69,8 @@ class EpicHandlerTest {
 
     @Test
     void getEpicById_Returns404ForInvalidId() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/epics/999"))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/epics/999");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -99,10 +85,7 @@ class EpicHandlerTest {
                 , LocalDateTime.now(), Duration.ZERO);
         taskManager.newSubtask(subtask);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/epics/" + testEpic.getId() + "/subtasks"))
-                .GET()
-                .build();
+        HttpRequest request = HttpTestClient.get("/epics/" + testEpic.getId() + "/subtasks");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -116,11 +99,7 @@ class EpicHandlerTest {
         Epic newEpic = new Epic(200002, "New Epic", "New Desc");
         String json = gson.toJson(newEpic);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/epics"))
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "application/json")
-                .build();
+        HttpRequest request = HttpTestClient.post("/epics", json);
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -134,11 +113,7 @@ class EpicHandlerTest {
         taskManager.updateEpic(newEpic);
         String json = gson.toJson(newEpic);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/epics"))
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "application/json")
-                .build();
+        HttpRequest request = HttpTestClient.post("/epics", json);
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -148,11 +123,8 @@ class EpicHandlerTest {
 
     @Test
     void postEpic_Returns400ForInvalidData() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/epics"))
-                .POST(HttpRequest.BodyPublishers.ofString("{ invalid json }"))
-                .header("Content-Type", "application/json")
-                .build();
+
+        HttpRequest request = HttpTestClient.post("/epics", "{ invalid json }");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -162,10 +134,8 @@ class EpicHandlerTest {
     // Тест DELETE /epics/{id}
     @Test
     void deleteEpic_DeletesEpic() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/epics/" + testEpic.getId()))
-                .DELETE()
-                .build();
+
+        HttpRequest request = HttpTestClient.delete("/epics/" + testEpic.getId());
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -175,10 +145,8 @@ class EpicHandlerTest {
 
     @Test
     void deleteEpic_Returns400ForInvalidId() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/epics/999"))
-                .DELETE()
-                .build();
+
+        HttpRequest request = HttpTestClient.delete("/epics/999");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 

@@ -57,7 +57,7 @@ public class HttpTaskServer {
 
     public void start() {
         httpServer.start();
-        System.out.println("Server started on port 8080");
+        System.out.println("Server started on port " + PORT);
     }
 
     public void stop() {

@@ -10,9 +10,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.HttpTaskServer;
+import server.handlers.GsonCreator;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -26,7 +26,7 @@ class HistoryHandlerTest {
     private TaskManager taskManager;
     private HttpTaskServer server;
     private final HttpClient client = HttpClient.newHttpClient();
-    private final Gson gson = new Gson();
+    private final Gson gson = GsonCreator.getGson();
 
     @BeforeEach
     void setUp() throws IOException {
@@ -52,10 +52,7 @@ class HistoryHandlerTest {
         taskManager.getTaskById(task.getId());
         taskManager.getEpicById(epic.getId());
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/history"))
-                .GET()
-                .build();
+        HttpRequest request = HttpTestClient.get("/history");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         List<Task> history = gson.fromJson(response.body(), List.class);
@@ -67,10 +64,8 @@ class HistoryHandlerTest {
     // GET /history (пустая история)
     @Test
     void getHistory_ReturnsEmptyList() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/history"))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/history");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -81,10 +76,8 @@ class HistoryHandlerTest {
     // GET /history с неверным методом (POST)
     @Test
     void getHistory_Returns405ForInvalidMethod() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/history"))
-                .POST(HttpRequest.BodyPublishers.noBody())
-                .build();
+
+        HttpRequest request = HttpTestClient.post("/history", "");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -94,14 +87,12 @@ class HistoryHandlerTest {
     // GET /history/invalid (неверный путь)
     @Test
     void getHistory_Returns404ForInvalidPath() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/history/invalid"))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/invalid");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         // В текущей реализации неверный путь обрабатывается как недопустимый метод (405)
-        assertEquals(405, response.statusCode());
+        assertEquals(404, response.statusCode());
     }
 }

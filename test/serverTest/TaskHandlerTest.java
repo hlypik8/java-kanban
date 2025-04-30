@@ -1,7 +1,6 @@
 package serverTest;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
 import model.Status;
@@ -10,11 +9,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.HttpTaskServer;
-import server.handlers.adapters.DurationAdapter;
-import server.handlers.adapters.LocalDateTimeAdapter;
+import server.handlers.GsonCreator;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -27,11 +24,7 @@ class TaskHandlerTest {
     private TaskManager taskManager;
     private HttpTaskServer server;
     private final HttpClient client = HttpClient.newHttpClient();
-    private final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .setPrettyPrinting()
-            .create();
+    private final Gson gson = GsonCreator.getGson();
 
     @BeforeEach
     void setUp() throws IOException {
@@ -47,10 +40,8 @@ class TaskHandlerTest {
 
     @Test
     void getTasks_ReturnsEmptyList() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks"))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/tasks");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -64,11 +55,7 @@ class TaskHandlerTest {
                 LocalDateTime.now(), Duration.ZERO);
         String json = gson.toJson(task);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks"))
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "application/json")
-                .build();
+        HttpRequest request = HttpTestClient.post("/tasks", json);
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -82,10 +69,7 @@ class TaskHandlerTest {
                 LocalDateTime.now(), Duration.ZERO);
         taskManager.newTask(task);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks/" + task.getId()))
-                .GET()
-                .build();
+        HttpRequest request = HttpTestClient.get("/tasks/" + task.getId());
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -95,10 +79,8 @@ class TaskHandlerTest {
 
     @Test
     void getTaskById_Returns404() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks/999"))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/tasks/999");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -111,10 +93,7 @@ class TaskHandlerTest {
                 LocalDateTime.now(), Duration.ZERO);
         taskManager.newTask(task);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks/" + task.getId()))
-                .DELETE()
-                .build();
+        HttpRequest request = HttpTestClient.delete("/tasks/" + task.getId());
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -124,11 +103,8 @@ class TaskHandlerTest {
 
     @Test
     void postTask_Returns400ForInvalidData() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks"))
-                .POST(HttpRequest.BodyPublishers.ofString("invalid json"))
-                .header("Content-Type", "application/json")
-                .build();
+
+        HttpRequest request = HttpTestClient.post("/tasks", "invalid json");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 

@@ -1,7 +1,6 @@
 package serverTest;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
 import manager.exceptions.IntersectionException;
@@ -12,11 +11,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.HttpTaskServer;
-import server.handlers.adapters.DurationAdapter;
-import server.handlers.adapters.LocalDateTimeAdapter;
+import server.handlers.GsonCreator;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -29,11 +26,7 @@ class SubtaskHandlerTest {
     private TaskManager taskManager;
     private HttpTaskServer server;
     private final HttpClient client = HttpClient.newHttpClient();
-    private final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .setPrettyPrinting()
-            .create();
+    private final Gson gson = GsonCreator.getGson();
     private Epic testEpic;
     private Subtask testSubtask;
 
@@ -60,10 +53,8 @@ class SubtaskHandlerTest {
     // GET /subtasks
     @Test
     void getSubtasks_ReturnsSubtasksList() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/subtasks"))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/subtasks");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -74,10 +65,8 @@ class SubtaskHandlerTest {
     // GET /subtasks/{id}
     @Test
     void getSubtaskById_ReturnsSubtask() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/subtasks/" + testSubtask.getId()))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/subtasks/" + testSubtask.getId());
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -87,10 +76,8 @@ class SubtaskHandlerTest {
 
     @Test
     void getSubtaskById_Returns404ForInvalidId() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/subtasks/999"))
-                .GET()
-                .build();
+
+        HttpRequest request = HttpTestClient.get("/subtasks/999");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -104,11 +91,7 @@ class SubtaskHandlerTest {
                 LocalDateTime.now().plusHours(1), Duration.ZERO);
         String json = gson.toJson(newSubtask);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/subtasks"))
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "application/json")
-                .build();
+        HttpRequest request = HttpTestClient.post("/subtasks", json);
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -122,11 +105,7 @@ class SubtaskHandlerTest {
                 Status.NEW, testEpic, LocalDateTime.now(), Duration.ZERO);
         String json = gson.toJson(newSubtask);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/subtasks"))
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "application/json")
-                .build();
+        HttpRequest request = HttpTestClient.post("/subtasks", json);
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -141,11 +120,7 @@ class SubtaskHandlerTest {
                 LocalDateTime.now().plusMinutes(30), Duration.ofHours(1));
         String json = gson.toJson(overlappingSubtask);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/subtasks"))
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .header("Content-Type", "application/json")
-                .build();
+        HttpRequest request = HttpTestClient.post("/subtasks", json);
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -154,11 +129,8 @@ class SubtaskHandlerTest {
 
     @Test
     void postSubtask_Returns400ForInvalidData() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/subtasks"))
-                .POST(HttpRequest.BodyPublishers.ofString("{ invalid json }"))
-                .header("Content-Type", "application/json")
-                .build();
+
+        HttpRequest request = HttpTestClient.post("/subtasks", "invalid Json");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -168,10 +140,8 @@ class SubtaskHandlerTest {
     // DELETE /subtasks/{id}
     @Test
     void deleteSubtask_DeletesSubtask() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/subtasks/" + testSubtask.getId()))
-                .DELETE()
-                .build();
+
+        HttpRequest request = HttpTestClient.delete("/subtasks/" + testSubtask.getId());
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -181,10 +151,8 @@ class SubtaskHandlerTest {
 
     @Test
     void deleteSubtask_Returns404ForInvalidId() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/subtasks/999"))
-                .DELETE()
-                .build();
+
+        HttpRequest request = HttpTestClient.delete("/subtasks/999");
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 

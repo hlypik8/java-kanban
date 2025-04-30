@@ -1,23 +1,14 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import server.handlers.adapters.DurationAdapter;
-import server.handlers.adapters.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 public abstract class BaseHttpHandler implements HttpHandler {
-    protected Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .setPrettyPrinting()
-            .create();
+    protected Gson gson = GsonCreator.getGson();
 
     protected void sendText(HttpExchange httpExchange, String text, int code) throws IOException {
         byte[] resp = text.getBytes(StandardCharsets.UTF_8);
